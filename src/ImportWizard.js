@@ -359,6 +359,9 @@ export default function ImportWizard({
                 <SliderThumb />
               </Slider>
             </Box>
+            <Text fontSize='sm' mt={2} textAlign='center'>
+              Drag the image so the part inside the grid looks right. Only what you see here will turn into stitches.
+            </Text>
             <Flex justify='space-between' mt={4}>
               <Button onClick={prevStep}>Back</Button>
               <Button colorScheme='teal' onClick={handleNext}>Next</Button>
