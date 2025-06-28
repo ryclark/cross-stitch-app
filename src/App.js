@@ -3,6 +3,7 @@ import Grid from './Grid';
 import ColorPalette from './ColorPalette';
 import { exportGridAsPng, findClosestDmcColor } from './utils';
 import { saveAs } from 'file-saver';
+import ImageCropper from './ImageCropper';
 
 function emptyGrid(size) {
   return Array.from({ length: size }, () => Array(size).fill(''));
@@ -24,6 +25,7 @@ export default function App() {
   const [grid, setGrid] = useState(emptyGrid(100));
   const [selectedColor, setSelectedColor] = useState('#000000');
   const [showGrid, setShowGrid] = useState(true);
+  const [croppingImage, setCroppingImage] = useState(null);
 
   // --- Responsive grid width ---
   const maxGridPx = 400; // The grid will always be this many px wide.
@@ -40,36 +42,32 @@ export default function App() {
     const reader = new FileReader();
     reader.onload = evt => {
       img.onload = () => {
-        // Always use the latest size
-        const canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, size, size);
-
-        const imageData = ctx.getImageData(0, 0, size, size).data;
-        const newGrid = [];
-        for (let y = 0; y < size; y++) {
-          const row = [];
-          for (let x = 0; x < size; x++) {
-            const idx = (y * size + x) * 4;
-            const rgb = [
-              imageData[idx],
-              imageData[idx + 1],
-              imageData[idx + 2]
-            ];
-            row.push(findClosestDmcColor(rgb));
-          }
-          newGrid.push(row);
-        }
-        setGrid(newGrid);
-
-        // Reset file input so user can upload the same file again
-        if (fileInputRef.current) fileInputRef.current.value = "";
+        setCroppingImage(img);
       };
       img.src = evt.target.result;
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleCropApply = imageData => {
+    const newGrid = [];
+    for (let y = 0; y < size; y++) {
+      const row = [];
+      for (let x = 0; x < size; x++) {
+        const idx = (y * size + x) * 4;
+        const rgb = [imageData[idx], imageData[idx + 1], imageData[idx + 2]];
+        row.push(findClosestDmcColor(rgb));
+      }
+      newGrid.push(row);
+    }
+    setGrid(newGrid);
+    setCroppingImage(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleCropCancel = () => {
+    setCroppingImage(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   // For loading JSON file
@@ -203,6 +201,15 @@ export default function App() {
         Image import maps to the closest DMC floss color. <br />
         Made with React. Enjoy!
       </small>
+      {croppingImage && (
+        <ImageCropper
+          img={croppingImage}
+          size={size}
+          maxGridPx={maxGridPx}
+          onCancel={handleCropCancel}
+          onApply={handleCropApply}
+        />
+      )}
     </div>
   );
 }
