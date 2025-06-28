@@ -3,12 +3,11 @@ import Grid from './Grid';
 import ColorPalette from './ColorPalette';
 import {
   exportGridAsPng,
-  findClosestDmcColor,
   getColorUsage,
   reduceColors
 } from './utils';
 import { saveAs } from 'file-saver';
-import ImageCropper from './ImageCropper';
+import ImportWizard from './ImportWizard';
 
 function emptyGrid(size) {
   return Array.from({ length: size }, () => Array(size).fill(''));
@@ -30,7 +29,7 @@ export default function App() {
   const [grid, setGrid] = useState(emptyGrid(100));
   const [selectedColor, setSelectedColor] = useState('#000000');
   const [showGrid, setShowGrid] = useState(true);
-  const [croppingImage, setCroppingImage] = useState(null);
+  const [importImage, setImportImage] = useState(null);
   const colorUsage = useMemo(() => getColorUsage(grid), [grid]);
   const [reduceTo, setReduceTo] = useState(10);
 
@@ -61,31 +60,22 @@ export default function App() {
     const reader = new FileReader();
     reader.onload = evt => {
       img.onload = () => {
-        setCroppingImage(img);
+        setImportImage(img);
       };
       img.src = evt.target.result;
     };
     reader.readAsDataURL(file);
   };
 
-  const handleCropApply = imageData => {
-    const newGrid = [];
-    for (let y = 0; y < size; y++) {
-      const row = [];
-      for (let x = 0; x < size; x++) {
-        const idx = (y * size + x) * 4;
-        const rgb = [imageData[idx], imageData[idx + 1], imageData[idx + 2]];
-        row.push(findClosestDmcColor(rgb));
-      }
-      newGrid.push(row);
-    }
+  const handleWizardComplete = newGrid => {
     setGrid(newGrid);
-    setCroppingImage(null);
+    setSize(newGrid.length);
+    setImportImage(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const handleCropCancel = () => {
-    setCroppingImage(null);
+  const handleWizardCancel = () => {
+    setImportImage(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -246,13 +236,13 @@ export default function App() {
         Image import maps to the closest DMC floss color. <br />
         Made with React. Enjoy!
       </small>
-      {croppingImage && (
-        <ImageCropper
-          img={croppingImage}
+      {importImage && (
+        <ImportWizard
+          img={importImage}
           size={size}
           maxGridPx={maxGridPx}
-          onCancel={handleCropCancel}
-          onApply={handleCropApply}
+          onCancel={handleWizardCancel}
+          onComplete={handleWizardComplete}
         />
       )}
     </div>
