@@ -200,7 +200,7 @@ export default function ImportWizard({
         bg='white'
         p={4}
         borderRadius='md'
-        width={modalWidth}
+        width={modalWidth * 2}
         maxWidth="90vw"
         maxHeight="90vh"
         overflowY="auto"
@@ -342,7 +342,16 @@ export default function ImportWizard({
               <img
                 src={img.src}
                 alt='crop'
-                style={{ position: 'absolute', left: offset.x, top: offset.y, width: img.width * scale, height: img.height * scale }}
+                draggable={false}
+                style={{
+                  position: 'absolute',
+                  left: offset.x,
+                  top: offset.y,
+                  width: img.width * scale,
+                  height: img.height * scale,
+                  maxWidth: 'none',
+                  userSelect: 'none'
+                }}
               />
               <Box
                 pointerEvents='none'
