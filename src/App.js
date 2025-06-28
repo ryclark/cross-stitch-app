@@ -1,7 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import Grid from './Grid';
 import ColorPalette from './ColorPalette';
-import { exportGridAsPng, findClosestDmcColor } from './utils';
+import {
+  exportGridAsPng,
+  findClosestDmcColor,
+  getColorUsage,
+  reduceColors
+} from './utils';
 import { saveAs } from 'file-saver';
 import ImageCropper from './ImageCropper';
 
@@ -26,6 +31,8 @@ export default function App() {
   const [selectedColor, setSelectedColor] = useState('#000000');
   const [showGrid, setShowGrid] = useState(true);
   const [croppingImage, setCroppingImage] = useState(null);
+  const colorUsage = useMemo(() => getColorUsage(grid), [grid]);
+  const [reduceTo, setReduceTo] = useState(10);
 
   // --- Responsive grid width ---
   const getMaxGridPx = () => Math.max(100, window.innerWidth - 40);
@@ -37,6 +44,11 @@ export default function App() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    const count = Object.keys(colorUsage).length;
+    if (reduceTo > count) setReduceTo(count);
+  }, [colorUsage, reduceTo]);
 
   // Ref for file input (image upload)
   const fileInputRef = useRef();
@@ -141,6 +153,10 @@ export default function App() {
     }
   };
 
+  const handleReduceColors = () => {
+    setGrid(prev => reduceColors(prev, reduceTo));
+  };
+
   return (
     <div
       style={{
@@ -180,6 +196,21 @@ export default function App() {
         showGrid={showGrid}
         maxGridPx={maxGridPx}
       />
+
+      <div style={{ margin: '12px 0' }}>
+        <span>{Object.keys(colorUsage).length} colors used</span>
+        <input
+          type="number"
+          min={1}
+          max={Object.keys(colorUsage).length || 1}
+          value={reduceTo}
+          onChange={e => setReduceTo(Number(e.target.value))}
+          style={{ width: 60, marginLeft: 8 }}
+        />
+        <button onClick={handleReduceColors} style={{ marginLeft: 8 }}>
+          Reduce Colors
+        </button>
+      </div>
 
       <div style={{ margin: '16px 0', display: 'flex', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
         <button onClick={handleLocalSave}>Save to Browser</button>
