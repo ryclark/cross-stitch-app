@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Grid from './Grid';
 import ColorPalette from './ColorPalette';
 import { exportGridAsPng, findClosestDmcColor } from './utils';
@@ -28,8 +28,15 @@ export default function App() {
   const [croppingImage, setCroppingImage] = useState(null);
 
   // --- Responsive grid width ---
-  const maxGridPx = 400; // The grid will always be this many px wide.
+  const getMaxGridPx = () => Math.max(100, window.innerWidth - 40);
+  const [maxGridPx, setMaxGridPx] = useState(getMaxGridPx());
   const cellSize = Math.floor(maxGridPx / size);
+
+  useEffect(() => {
+    const handleResize = () => setMaxGridPx(getMaxGridPx());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Ref for file input (image upload)
   const fileInputRef = useRef();
@@ -135,7 +142,14 @@ export default function App() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: '30px auto', fontFamily: 'sans-serif', textAlign: 'center' }}>
+    <div
+      style={{
+        margin: '30px auto',
+        fontFamily: 'sans-serif',
+        textAlign: 'center',
+        padding: '0 20px'
+      }}
+    >
       <h2>🧵 Cross Stitch Pattern Creator</h2>
       <div style={{ margin: '10px 0' }}>
         <label>
