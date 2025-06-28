@@ -56,6 +56,8 @@ export default function ImportWizard({
   const [reduceTo, setReduceTo] = useState(1);
   const [maxColors, setMaxColors] = useState(1);
 
+  const inchCell = 12; // size of a single stitch preview cell
+
   const gridWidth = Math.round(widthIn * fabricCount);
   const gridHeight = Math.round(heightIn * fabricCount);
 
@@ -212,6 +214,46 @@ export default function ImportWizard({
             <Text fontSize='sm' mb={4}>
               Fabric type is Aida and the number is stitches per inch. For example, 14-count Aida is Aida fabric with 14 stitches per inch.
             </Text>
+            <Box textAlign='center' mb={4}>
+              <Text mb={1}>1"</Text>
+              <Box
+                display='grid'
+                gridTemplateColumns={`repeat(${fabricCount}, ${inchCell}px)`}
+                gridTemplateRows={`${inchCell}px`}
+                border='1px solid #444'
+                w={fabricCount * inchCell}
+                m='0 auto'
+              >
+                {Array.from({ length: fabricCount }).map((_, i) => (
+                  <Box key={i} border='1px solid #ccc' />
+                ))}
+              </Box>
+              <Text fontSize='sm' mt={1}>{fabricCount} stitches in 1"</Text>
+            </Box>
+            <Box textAlign='center' mb={4}>
+              <Flex justify='center' align='center'>
+                <Text transform='rotate(-90deg)' mr={1}>1"</Text>
+                <Box>
+                  <Text mb={1}>1"</Text>
+                  <Box
+                    display='grid'
+                    gridTemplateColumns={`repeat(${fabricCount}, ${inchCell}px)`}
+                    gridTemplateRows={`repeat(${fabricCount}, ${inchCell}px)`}
+                    border='1px solid #444'
+                    w={fabricCount * inchCell}
+                    m='0 auto'
+                  >
+                    {Array.from({ length: fabricCount * fabricCount }).map((_, i) => (
+                      <Box key={i} border='1px solid #ccc' />
+                    ))}
+                  </Box>
+                </Box>
+                <Text transform='rotate(90deg)' ml={1}>1"</Text>
+              </Flex>
+              <Text fontSize='sm' mt={1}>
+                {fabricCount} × {fabricCount} = {fabricCount * fabricCount} stitches per square inch
+              </Text>
+            </Box>
             <Flex justify='flex-end'>
               <Button mr={2} onClick={onCancel}>Cancel</Button>
               <Button colorScheme='teal' onClick={handleNext}>Next</Button>
