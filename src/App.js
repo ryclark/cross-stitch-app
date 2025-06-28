@@ -163,51 +163,9 @@ export default function App() {
           padding: '0 20px'
         }}
       >
-      <h2>🧵 Cross Stitch Pattern Creator</h2>
-      <div style={{ margin: '10px 0' }}>
-        <label>
-          Grid size:
-          <select value={size} onChange={handleSizeChange} style={{ marginLeft: 8 }}>
-            <option value={100}>100 x 100</option>
-            <option value={200}>200 x 200</option>
-            <option value={300}>300 x 300</option>
-          </select>
-        </label>
-        <button onClick={handleNewGrid} style={{ marginLeft: 8 }}>Clear Grid</button>
-      </div>
-      <ColorPalette selected={selectedColor} setSelected={setSelectedColor} />
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={showGrid}
-            onChange={() => setShowGrid(g => !g)}
-          />{' '}
-          Show Grid
-        </label>
-      </div>
-      <Grid
-        grid={grid}
-        setGrid={setGrid}
-        selectedColor={selectedColor}
-        showGrid={showGrid}
-        maxGridPx={maxGridPx}
-      />
+      
 
-      <div style={{ margin: '12px 0' }}>
-        <span>{Object.keys(colorUsage).length} colors used</span>
-        <input
-          type="number"
-          min={1}
-          max={Object.keys(colorUsage).length || 1}
-          value={reduceTo}
-          onChange={e => setReduceTo(Number(e.target.value))}
-          style={{ width: 60, marginLeft: 8 }}
-        />
-        <button onClick={handleReduceColors} style={{ marginLeft: 8 }}>
-          Reduce Colors
-        </button>
-      </div>
+    
 
       <div style={{ margin: '16px 0', display: 'flex', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
         <button onClick={handleLocalSave}>Save to Browser</button>
