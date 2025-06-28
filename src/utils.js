@@ -21,6 +21,46 @@ function colorDist(a, b) {
   );
 }
 
+// Count how many times each color is used
+export function getColorUsage(grid) {
+  const counts = {};
+  grid.forEach(row =>
+    row.forEach(hex => {
+      if (!hex) return;
+      counts[hex] = (counts[hex] || 0) + 1;
+    })
+  );
+  return counts;
+}
+
+// Reduce the number of colors used in the grid to the desired count
+export function reduceColors(grid, targetCount) {
+  if (targetCount <= 0) return grid;
+  const counts = getColorUsage(grid);
+  const topColors = Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, targetCount)
+    .map(([hex]) => hex);
+  if (topColors.length === 0) return grid;
+  return grid.map(row =>
+    row.map(hex => {
+      if (!hex) return hex;
+      if (topColors.includes(hex)) return hex;
+      const rgb = hexToRgb(hex);
+      let best = topColors[0];
+      let min = Infinity;
+      topColors.forEach(tc => {
+        const d = colorDist(rgb, hexToRgb(tc));
+        if (d < min) {
+          min = d;
+          best = tc;
+        }
+      });
+      return best;
+    })
+  );
+}
+
 // Find the closest DMC color (by RGB distance)
 export function findClosestDmcColor(rgb) {
   let minDist = Infinity;
