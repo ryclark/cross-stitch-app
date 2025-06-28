@@ -9,8 +9,8 @@ import {
 import { saveAs } from 'file-saver';
 import ImportWizard from './ImportWizard';
 
-function emptyGrid(size) {
-  return Array.from({ length: size }, () => Array(size).fill(''));
+function emptyGrid(width, height = width) {
+  return Array.from({ length: height }, () => Array(width).fill(''));
 }
 
 function saveToLocal(name, grid) {
@@ -24,9 +24,13 @@ function loadFromLocal(name) {
   }
 }
 
+function getMaxDim(grid) {
+  return Math.max(grid.length, grid[0]?.length || 0);
+}
+
 export default function App() {
   const [size, setSize] = useState(100);
-  const [grid, setGrid] = useState(emptyGrid(100));
+  const [grid, setGrid] = useState(emptyGrid(100, 100));
   const [selectedColor, setSelectedColor] = useState('#000000');
   const [showGrid, setShowGrid] = useState(true);
   const [importImage, setImportImage] = useState(null);
@@ -69,7 +73,7 @@ export default function App() {
 
   const handleWizardComplete = newGrid => {
     setGrid(newGrid);
-    setSize(newGrid.length);
+    setSize(getMaxDim(newGrid));
     setImportImage(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
@@ -88,7 +92,7 @@ export default function App() {
       try {
         const loaded = JSON.parse(evt.target.result);
         if (Array.isArray(loaded) && loaded.length > 0 && Array.isArray(loaded[0])) {
-          setSize(loaded.length);
+          setSize(getMaxDim(loaded));
           setGrid(loaded);
         } else {
           alert('Invalid file format.');
@@ -120,7 +124,7 @@ export default function App() {
   // New grid
   const handleNewGrid = () => {
     if (window.confirm('Clear current grid?')) {
-      setGrid(emptyGrid(size));
+      setGrid(emptyGrid(size, size));
     }
   };
 
@@ -128,7 +132,7 @@ export default function App() {
   const handleSizeChange = e => {
     const newSize = Number(e.target.value);
     setSize(newSize);
-    setGrid(emptyGrid(newSize));
+    setGrid(emptyGrid(newSize, newSize));
   };
 
   // Save/load to/from localStorage
@@ -136,7 +140,7 @@ export default function App() {
   const handleLocalLoad = () => {
     const loaded = loadFromLocal('cross_stitch');
     if (loaded) {
-      setSize(loaded.length);
+      setSize(getMaxDim(loaded));
       setGrid(loaded);
     } else {
       alert('No design found in local storage.');

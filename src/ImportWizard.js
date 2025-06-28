@@ -56,7 +56,8 @@ export default function ImportWizard({
   const [reduceTo, setReduceTo] = useState(1);
   const [maxColors, setMaxColors] = useState(1);
 
-  const gridSize = Math.round(Math.max(widthIn, heightIn) * fabricCount);
+  const gridWidth = Math.round(widthIn * fabricCount);
+  const gridHeight = Math.round(heightIn * fabricCount);
 
   const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
 
@@ -72,6 +73,7 @@ export default function ImportWizard({
 
   const handleMouseDown = e => {
     dragRef.current = { x: e.clientX, y: e.clientY, start: offset };
+    window.addEventListener('mousemove', handleMouseMove);
   };
 
   const handleMouseMove = e => {
@@ -84,6 +86,7 @@ export default function ImportWizard({
   useEffect(() => {
     const handleUp = () => {
       dragRef.current = null;
+      window.removeEventListener('mousemove', handleMouseMove);
     };
     window.addEventListener('mouseup', handleUp);
     return () => window.removeEventListener('mouseup', handleUp);
@@ -101,21 +104,21 @@ export default function ImportWizard({
   }, [scale]);
 
   const generateGrid = () => {
-    const size = gridSize;
     const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = size;
+    canvas.width = gridWidth;
+    canvas.height = gridHeight;
     const ctx = canvas.getContext('2d');
     const srcX = Math.max(0, -offset.x / scale);
     const srcY = Math.max(0, -offset.y / scale);
     const srcW = containerSize / scale;
     const srcH = containerSize / scale;
-    ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, size, size);
-    const data = ctx.getImageData(0, 0, size, size).data;
+    ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, gridWidth, gridHeight);
+    const data = ctx.getImageData(0, 0, gridWidth, gridHeight).data;
     const g = [];
-    for (let y = 0; y < size; y++) {
+    for (let y = 0; y < gridHeight; y++) {
       const row = [];
-      for (let x = 0; x < size; x++) {
-        const idx = (y * size + x) * 4;
+      for (let x = 0; x < gridWidth; x++) {
+        const idx = (y * gridWidth + x) * 4;
         const rgb = [data[idx], data[idx + 1], data[idx + 2]];
         row.push(findClosestDmcColor(rgb));
       }
@@ -260,7 +263,7 @@ export default function ImportWizard({
                 bottom={0}
                 style={{
                   backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.3) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.3) 1px, transparent 1px)`,
-                  backgroundSize: `${containerSize / gridSize}px ${containerSize / gridSize}px`
+                  backgroundSize: `${containerSize / gridWidth}px ${containerSize / gridHeight}px`
                 }}
               />
             </Box>

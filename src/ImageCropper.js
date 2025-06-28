@@ -30,6 +30,7 @@ export default function ImageCropper({ img, size, maxGridPx = 400, onCancel, onA
 
   const handleMouseDown = e => {
     dragRef.current = { x: e.clientX, y: e.clientY, start: offset };
+    window.addEventListener('mousemove', handleMouseMove);
   };
 
   const handleMouseMove = e => {
@@ -42,6 +43,7 @@ export default function ImageCropper({ img, size, maxGridPx = 400, onCancel, onA
   useEffect(() => {
     const handleUp = () => {
       dragRef.current = null;
+      window.removeEventListener('mousemove', handleMouseMove);
     };
     window.addEventListener('mouseup', handleUp);
     return () => window.removeEventListener('mouseup', handleUp);
