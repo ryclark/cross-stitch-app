@@ -36,7 +36,27 @@ export default function App() {
 
   const handleSelectSample = src => {
     const img = new window.Image();
-    img.onload = () => setImportImage(img);
+    img.onload = () => {
+      const size = Math.min(img.width, img.height);
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(
+        img,
+        (img.width - size) / 2,
+        (img.height - size) / 2,
+        size,
+        size,
+        0,
+        0,
+        size,
+        size
+      );
+      const cropped = new window.Image();
+      cropped.onload = () => setImportImage(cropped);
+      cropped.src = canvas.toDataURL();
+    };
     img.src = src;
     setShowImageOptions(false);
   };
@@ -89,18 +109,24 @@ export default function App() {
               <Image
                 src={sample1}
                 alt="Sample 1"
+                boxSize="120px"
+                objectFit="cover"
                 cursor="pointer"
                 onClick={() => handleSelectSample(sample1)}
               />
               <Image
                 src={sample2}
                 alt="Sample 2"
+                boxSize="120px"
+                objectFit="cover"
                 cursor="pointer"
                 onClick={() => handleSelectSample(sample2)}
               />
               <Image
                 src={sample3}
                 alt="Sample 3"
+                boxSize="120px"
+                objectFit="cover"
                 cursor="pointer"
                 onClick={() => handleSelectSample(sample3)}
               />
