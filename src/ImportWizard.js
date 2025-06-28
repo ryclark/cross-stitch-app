@@ -30,7 +30,10 @@ export default function ImportWizard({
   onCancel,
   onComplete
 }) {
-  const containerSize = maxGridPx;
+  // Limit the preview/crop area so the wizard modal stays usable on large screens
+  const containerSize = Math.min(maxGridPx, 400);
+  // Outer modal width keeps a small margin around the image area
+  const modalWidth = containerSize + 40;
 
   const [step, setStep] = useState(0); // 0-based index
   const [fabricCount, setFabricCount] = useState(14);
@@ -171,7 +174,15 @@ export default function ImportWizard({
 
   return (
     <Box {...overlayProps}>
-      <Box bg='white' p={4} borderRadius='md'>
+      <Box
+        bg='white'
+        p={4}
+        borderRadius='md'
+        width={modalWidth}
+        maxWidth="90vw"
+        maxHeight="90vh"
+        overflowY="auto"
+      >
         <Stepper index={step} mb={4} size='sm'>
           {steps.map((s, i) => (
             <Step key={i}>
@@ -270,7 +281,13 @@ export default function ImportWizard({
 
         {step === 3 && (
           <Box>
-            <Grid grid={preview} setGrid={() => {}} selectedColor={null} showGrid={false} maxGridPx={maxGridPx} />
+            <Grid
+              grid={preview}
+              setGrid={() => {}}
+              selectedColor={null}
+              showGrid={false}
+              maxGridPx={containerSize}
+            />
             <Box mt={2} px={2}>
               <Slider min={1} max={maxColors} value={reduceTo} onChange={handleReduceChange}>
                 <SliderTrack>
