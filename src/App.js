@@ -105,7 +105,7 @@ export default function App() {
           zIndex={1000}
         >
           <Box bg="white" p={4} borderRadius="md">
-            <SimpleGrid columns={[1, 2]} spacing={4} minChildWidth="120px">
+            <SimpleGrid columns={2} spacing={4}>
               <Image
                 src={sample1}
                 alt="Sample 1"
@@ -130,7 +130,13 @@ export default function App() {
                 cursor="pointer"
                 onClick={() => handleSelectSample(sample3)}
               />
-              <Button onClick={openFileDialog}>Upload your own image</Button>
+              <Button
+                onClick={openFileDialog}
+                boxSize="120px"
+                whiteSpace="normal"
+              >
+                Upload your own image
+              </Button>
             </SimpleGrid>
             <Box textAlign="right" mt={4}>
               <Button onClick={() => setShowImageOptions(false)}>Cancel</Button>
