@@ -404,7 +404,7 @@ export default function ImportWizard({
                 <SliderThumb />
               </Slider>
               <Collapsible label={<Text textAlign='center'>{reduceTo} colors</Text>}>
-                <UsedColors colors={Object.keys(colorUsage)} />
+                <UsedColors colors={Object.keys(colorUsage)} usage={colorUsage} />
               </Collapsible>
             </Box>
             <Flex justify='space-between' mt={4}>
