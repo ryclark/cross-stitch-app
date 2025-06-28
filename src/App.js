@@ -3,9 +3,9 @@ import { Box, Button, Image, SimpleGrid } from '@chakra-ui/react';
 import ImportWizard from './ImportWizard';
 import Header from './Header';
 import Footer from './Footer';
-import sample1 from './images/samples/sample1.svg';
-import sample2 from './images/samples/sample2.svg';
-import sample3 from './images/samples/sample3.svg';
+import sample1 from './images/samples/dancer.png';
+import sample2 from './images/samples/baloons.png';
+import sample3 from './images/samples/rain.png';
 
 export default function App() {
   const [importImage, setImportImage] = useState(null);
