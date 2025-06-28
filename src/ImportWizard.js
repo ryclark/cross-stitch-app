@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   Box,
   Button,
@@ -22,6 +22,8 @@ import {
 } from '@chakra-ui/react';
 import Grid from './Grid';
 import { findClosestDmcColor, getColorUsage, reduceColors } from './utils';
+import Collapsible from './Collapsible';
+import UsedColors from './UsedColors';
 
 export default function ImportWizard({
   img,
@@ -69,6 +71,7 @@ export default function ImportWizard({
   const [preview, setPreview] = useState(null);
   const [reduceTo, setReduceTo] = useState(1);
   const [maxColors, setMaxColors] = useState(1);
+  const colorUsage = useMemo(() => (preview ? getColorUsage(preview) : {}), [preview]);
 
   // Size preview scale so the entire design plus border fits inside the wizard
   const previewScale = Math.min(
@@ -400,7 +403,9 @@ export default function ImportWizard({
                 </SliderTrack>
                 <SliderThumb />
               </Slider>
-              <Text mt={1} textAlign='center'>{reduceTo} colors</Text>
+              <Collapsible label={<Text textAlign='center'>{reduceTo} colors</Text>}>
+                <UsedColors colors={Object.keys(colorUsage)} />
+              </Collapsible>
             </Box>
             <Flex justify='space-between' mt={4}>
               <Button onClick={prevStep}>Back</Button>
