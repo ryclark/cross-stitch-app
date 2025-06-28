@@ -20,8 +20,8 @@ function loadFromLocal(name) {
 }
 
 export default function App() {
-  const [size, setSize] = useState(10);
-  const [grid, setGrid] = useState(emptyGrid(10));
+  const [size, setSize] = useState(100);
+  const [grid, setGrid] = useState(emptyGrid(100));
   const [selectedColor, setSelectedColor] = useState('#000000');
   const [showGrid, setShowGrid] = useState(true);
 
@@ -119,7 +119,7 @@ export default function App() {
 
   // Change grid size
   const handleSizeChange = e => {
-    const newSize = Math.max(2, Math.min(40, Number(e.target.value)));
+    const newSize = Number(e.target.value);
     setSize(newSize);
     setGrid(emptyGrid(newSize));
   };
@@ -142,14 +142,11 @@ export default function App() {
       <div style={{ margin: '10px 0' }}>
         <label>
           Grid size:
-          <input
-            type="number"
-            min="2"
-            max="40"
-            value={size}
-            onChange={handleSizeChange}
-            style={{ width: 50, marginLeft: 8 }}
-          />
+          <select value={size} onChange={handleSizeChange} style={{ marginLeft: 8 }}>
+            <option value={100}>100 x 100</option>
+            <option value={200}>200 x 200</option>
+            <option value={300}>300 x 300</option>
+          </select>
         </label>
         <button onClick={handleNewGrid} style={{ marginLeft: 8 }}>Clear Grid</button>
       </div>
