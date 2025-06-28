@@ -168,7 +168,14 @@ export default function ImportWizard({
   };
 
   const handleFinish = () => {
-    onComplete(preview);
+    onComplete({
+      grid: preview,
+      fabricCount,
+      widthIn,
+      heightIn,
+      colors: Object.keys(colorUsage),
+      colorUsage
+    });
   };
 
   const handleReduceChange = val => {

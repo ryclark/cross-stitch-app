@@ -1,5 +1,19 @@
 import React, { useState, useRef } from 'react';
-import { Box, Button, Image, SimpleGrid } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Image,
+  SimpleGrid,
+  useDisclosure,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerHeader,
+  DrawerBody,
+  DrawerCloseButton
+} from '@chakra-ui/react';
+import Grid from './Grid';
+import UsedColors from './UsedColors';
 import ImportWizard from './ImportWizard';
 import Header from './Header';
 import Footer from './Footer';
@@ -10,7 +24,9 @@ import sample3 from './images/samples/rain.png';
 export default function App() {
   const [importImage, setImportImage] = useState(null);
   const [showImageOptions, setShowImageOptions] = useState(false);
+  const [pattern, setPattern] = useState(null);
   const fileInputRef = useRef();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleImageUpload = file => {
     if (!file) return;
@@ -24,7 +40,8 @@ export default function App() {
     setShowImageOptions(false);
   };
 
-  const handleWizardComplete = () => {
+  const handleWizardComplete = details => {
+    setPattern(details);
     setImportImage(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
@@ -73,22 +90,35 @@ export default function App() {
         display="flex"
         alignItems="center"
         justifyContent="center"
+        flexDirection="column"
         height="70vh"
       >
-        <input
-          type="file"
-          accept="image/*"
-          style={{ display: 'none' }}
-          ref={fileInputRef}
-          onChange={e => handleImageUpload(e.target.files[0])}
-        />
-        <Button
-          size="lg"
-          colorScheme="teal"
-          onClick={() => setShowImageOptions(true)}
-        >
-          Try it out!
-        </Button>
+        {!pattern && (
+          <>
+            <input
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+              onChange={e => handleImageUpload(e.target.files[0])}
+            />
+            <Button
+              size="lg"
+              colorScheme="teal"
+              onClick={() => setShowImageOptions(true)}
+            >
+              Try it out!
+            </Button>
+          </>
+        )}
+        {pattern && (
+          <>
+            <Grid grid={pattern.grid} setGrid={() => {}} selectedColor={null} showGrid maxGridPx={500} />
+            <Button mt={4} colorScheme="teal" onClick={onOpen}>
+              Pattern Details
+            </Button>
+          </>
+        )}
       </Box>
       <Footer />
       {showImageOptions && (
@@ -150,6 +180,27 @@ export default function App() {
           onCancel={handleWizardCancel}
           onComplete={handleWizardComplete}
         />
+      )}
+      {pattern && (
+        <Drawer placement="bottom" onClose={onClose} isOpen={isOpen}>
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader>Pattern Details</DrawerHeader>
+            <DrawerBody>
+              <Box mb={4}>
+                <strong>Fabric:</strong> {pattern.fabricCount}-count Aida
+              </Box>
+              <Box mb={4}>
+                <strong>Dimensions:</strong> {pattern.widthIn}&quot; x {pattern.heightIn}&quot;
+              </Box>
+              <Box mb={2}>
+                <strong>Colors</strong>
+              </Box>
+              <UsedColors colors={pattern.colors} usage={pattern.colorUsage} />
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
       )}
     </>
   );
