@@ -33,7 +33,7 @@ export default function ImportWizard({
   onComplete
 }) {
   // Limit the preview/crop area so the wizard modal stays usable on large screens
-  const containerSize = Math.min(maxGridPx, 400);
+  const containerSize = Math.min(maxGridPx, 700);
   // Outer modal width keeps a small margin around the image area
   const modalWidth = containerSize + 40;
 
