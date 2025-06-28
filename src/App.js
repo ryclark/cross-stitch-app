@@ -8,6 +8,7 @@ import {
 } from './utils';
 import { saveAs } from 'file-saver';
 import ImportWizard from './ImportWizard';
+import Header from './Header';
 
 function emptyGrid(width, height = width) {
   return Array.from({ length: height }, () => Array(width).fill(''));
@@ -152,14 +153,16 @@ export default function App() {
   };
 
   return (
-    <div
-      style={{
-        margin: '30px auto',
-        fontFamily: 'sans-serif',
-        textAlign: 'center',
-        padding: '0 20px'
-      }}
-    >
+    <>
+      <Header />
+      <div
+        style={{
+          margin: '30px auto',
+          fontFamily: 'sans-serif',
+          textAlign: 'center',
+          padding: '0 20px'
+        }}
+      >
       <h2>🧵 Cross Stitch Pattern Creator</h2>
       <div style={{ margin: '10px 0' }}>
         <label>
@@ -250,5 +253,6 @@ export default function App() {
         />
       )}
     </div>
+    </>
   );
 }
