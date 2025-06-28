@@ -40,22 +40,6 @@ export default function ImportWizard({
   const [widthIn, setWidthIn] = useState(4);
   const [heightIn, setHeightIn] = useState(4);
 
-  // Crop state
-  const minScale = containerSize / Math.max(img.width, img.height);
-  const initialScale = containerSize / Math.min(img.width, img.height);
-  const [scale, setScale] = useState(initialScale);
-  const scaleRef = useRef(initialScale);
-  const [offset, setOffset] = useState({
-    x: (containerSize - img.width * initialScale) / 2,
-    y: (containerSize - img.height * initialScale) / 2
-  });
-  const dragRef = useRef(null);
-
-  const [grid, setGrid] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [reduceTo, setReduceTo] = useState(1);
-  const [maxColors, setMaxColors] = useState(1);
-
   const inchCell = 12; // size of a single stitch preview cell
 
   const borderIn = 2; // default border size in inches
@@ -63,6 +47,28 @@ export default function ImportWizard({
   const gridHeight = Math.round(heightIn * fabricCount);
   const totalGridWidth = gridWidth + borderIn * 2 * fabricCount;
   const totalGridHeight = gridHeight + borderIn * 2 * fabricCount;
+
+  // Dimensions for the cropping overlay in step 3
+  const maxDim = Math.max(gridWidth, gridHeight);
+  const cellPx = containerSize / maxDim;
+  const cropWidth = gridWidth * cellPx;
+  const cropHeight = gridHeight * cellPx;
+
+  // Crop state
+  const minScale = Math.min(cropWidth / img.width, cropHeight / img.height);
+  const initialScale = Math.max(cropWidth / img.width, cropHeight / img.height);
+  const [scale, setScale] = useState(initialScale);
+  const scaleRef = useRef(initialScale);
+  const [offset, setOffset] = useState({
+    x: (cropWidth - img.width * initialScale) / 2,
+    y: (cropHeight - img.height * initialScale) / 2
+  });
+  const dragRef = useRef(null);
+
+  const [grid, setGrid] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [reduceTo, setReduceTo] = useState(1);
+  const [maxColors, setMaxColors] = useState(1);
 
   // Size preview scale so the entire design plus border fits inside the wizard
   const previewScale = Math.min(
@@ -77,10 +83,10 @@ export default function ImportWizard({
   const updateOffset = (x, y, s) => {
     const w = img.width * s;
     const h = img.height * s;
-    if (w <= containerSize) x = (containerSize - w) / 2;
-    else x = clamp(x, containerSize - w, 0);
-    if (h <= containerSize) y = (containerSize - h) / 2;
-    else y = clamp(y, containerSize - h, 0);
+    if (w <= cropWidth) x = (cropWidth - w) / 2;
+    else x = clamp(x, cropWidth - w, 0);
+    if (h <= cropHeight) y = (cropHeight - h) / 2;
+    else y = clamp(y, cropHeight - h, 0);
     setOffset({ x, y });
   };
 
@@ -123,8 +129,8 @@ export default function ImportWizard({
     const ctx = canvas.getContext('2d');
     const srcX = Math.max(0, -offset.x / scale);
     const srcY = Math.max(0, -offset.y / scale);
-    const srcW = containerSize / scale;
-    const srcH = containerSize / scale;
+    const srcW = cropWidth / scale;
+    const srcH = cropHeight / scale;
     ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, gridWidth, gridHeight);
     const data = ctx.getImageData(0, 0, gridWidth, gridHeight).data;
     const g = [];
@@ -324,8 +330,8 @@ export default function ImportWizard({
           <Box>
             <Box
               position='relative'
-              width={containerSize}
-              height={containerSize}
+              width={cropWidth}
+              height={cropHeight}
               overflow='hidden'
               bg='#fff'
               m='0 auto'
@@ -347,7 +353,7 @@ export default function ImportWizard({
                 bottom={0}
                 style={{
                   backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.3) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.3) 1px, transparent 1px)`,
-                  backgroundSize: `${containerSize / gridWidth}px ${containerSize / gridHeight}px`
+                  backgroundSize: `${cellPx}px ${cellPx}px`
                 }}
               />
             </Box>
