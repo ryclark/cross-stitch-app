@@ -1,4 +1,5 @@
 import React from 'react';
+import { Flex, Box, Text } from '@chakra-ui/react';
 
 export const DMC_COLORS = [
   { name: 'Salmon Very Light', code: '3713', hex: '#FFE2E2' },
@@ -459,25 +460,23 @@ export const DMC_COLORS = [
 
 export default function ColorPalette({ selected, setSelected }) {
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, margin: '10px 0', justifyContent: 'center' }}>
+    <Flex wrap="wrap" gap={2} my={2} justify="center">
       {DMC_COLORS.map(c => (
-        <div key={c.code} style={{ textAlign: 'center', fontSize: 11 }}>
-          <div
+        <Box key={c.code} textAlign="center" fontSize="11px">
+          <Box
             onClick={() => setSelected(c.hex)}
-            style={{
-              width: 24,
-              height: 24,
-              border: selected === c.hex ? '2px solid #333' : '1px solid #ccc',
-              background: c.hex,
-              borderRadius: 4,
-              cursor: 'pointer',
-              margin: '0 auto'
-            }}
+            w="24px"
+            h="24px"
+            border={selected === c.hex ? '2px solid #333' : '1px solid #ccc'}
+            bg={c.hex}
+            borderRadius="4px"
+            cursor="pointer"
+            m="0 auto"
             title={`${c.name} (${c.code})`}
           />
-          <div style={{ marginTop: 1 }}>{c.code}</div>
-        </div>
+          <Text mt={1}>{c.code}</Text>
+        </Box>
       ))}
-    </div>
+    </Flex>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Box, Button, Input } from '@chakra-ui/react';
 
 export default function ImageCropper({ img, size, maxGridPx = 400, onCancel, onApply }) {
   const containerSize = maxGridPx;
@@ -71,31 +72,27 @@ export default function ImageCropper({ img, size, maxGridPx = 400, onCancel, onA
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0,0,0,0.7)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000
-      }}
+    <Box
+      position="fixed"
+      top={0}
+      left={0}
+      right={0}
+      bottom={0}
+      bg="rgba(0,0,0,0.7)"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      zIndex={1000}
     >
-      <div>
-        <div
-          style={{
-            position: 'relative',
-            width: containerSize,
-            height: containerSize,
-            overflow: 'hidden',
-            background: '#fff',
-            margin: '0 auto',
-            cursor: 'move'
-          }}
+      <Box>
+        <Box
+          position="relative"
+          width={containerSize}
+          height={containerSize}
+          overflow="hidden"
+          bg="#fff"
+          m="0 auto"
+          cursor="move"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
         >
@@ -110,9 +107,9 @@ export default function ImageCropper({ img, size, maxGridPx = 400, onCancel, onA
               height: img.height * scale
             }}
           />
-        </div>
-        <div style={{ marginTop: 8, textAlign: 'center' }}>
-          <input
+        </Box>
+        <Box mt={2} textAlign="center">
+          <Input
             type="range"
             min={minScale}
             max={initialScale * 3}
@@ -120,14 +117,14 @@ export default function ImageCropper({ img, size, maxGridPx = 400, onCancel, onA
             value={scale}
             onChange={e => setScale(Number(e.target.value))}
           />
-        </div>
-        <div style={{ marginTop: 8, textAlign: 'center' }}>
-          <button onClick={handleApply} style={{ marginRight: 8 }}>
+        </Box>
+        <Box mt={2} textAlign="center">
+          <Button onClick={handleApply} mr={2}>
             Use Image
-          </button>
-          <button onClick={onCancel}>Cancel</button>
-        </div>
-      </div>
-    </div>
+          </Button>
+          <Button onClick={onCancel}>Cancel</Button>
+        </Box>
+      </Box>
+    </Box>
   );
 }
