@@ -31,6 +31,7 @@ export default function App() {
 
   // Ref for file input (image upload)
   const fileInputRef = useRef();
+  const jsonInputRef = useRef();
 
   // --- Image Upload Handler ---
   const handleImageUpload = file => {
@@ -87,6 +88,8 @@ export default function App() {
         }
       } catch {
         alert('Invalid file.');
+      } finally {
+        if (jsonInputRef.current) jsonInputRef.current.value = '';
       }
     };
     reader.readAsText(file);
@@ -174,7 +177,13 @@ export default function App() {
         <button onClick={handleLocalLoad}>Load from Browser</button>
         <button onClick={handleExportJSON}>Export JSON</button>
         <label style={{ cursor: 'pointer' }}>
-          <input type="file" accept="application/json" style={{ display: 'none' }} onChange={handleFile} />
+          <input
+            type="file"
+            accept="application/json"
+            style={{ display: 'none' }}
+            onChange={handleFile}
+            ref={jsonInputRef}
+          />
           Import JSON
         </label>
         <button onClick={handleExportPNG}>Export PNG</button>
