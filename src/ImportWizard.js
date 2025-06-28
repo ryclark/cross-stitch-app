@@ -58,15 +58,19 @@ export default function ImportWizard({
 
   const inchCell = 12; // size of a single stitch preview cell
 
+  const borderIn = 2; // default border size in inches
   const gridWidth = Math.round(widthIn * fabricCount);
   const gridHeight = Math.round(heightIn * fabricCount);
+  const totalGridWidth = gridWidth + borderIn * 2 * fabricCount;
+  const totalGridHeight = gridHeight + borderIn * 2 * fabricCount;
 
-  // Size preview scale so the entire design fits inside the wizard
+  // Size preview scale so the entire design plus border fits inside the wizard
   const previewScale = Math.min(
-    containerSize / gridWidth,
-    containerSize / gridHeight
+    containerSize / totalGridWidth,
+    containerSize / totalGridHeight
   );
   const inchPx = fabricCount * previewScale;
+  const borderPx = borderIn * fabricCount * previewScale;
 
   const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
 
@@ -281,14 +285,32 @@ export default function ImportWizard({
             <Box textAlign='center' mt={4}>
               <Box bg='#666' display='inline-block' p={1}>
                 <Box
-                  width={gridWidth * previewScale}
-                  height={gridHeight * previewScale}
-                  bg='#f8f8f8'
-                  style={{
-                    backgroundImage: `repeating-linear-gradient(to right, rgba(0,0,0,0.6) 0, rgba(0,0,0,0.6) 2px, transparent 2px, transparent ${inchPx}px), repeating-linear-gradient(to bottom, rgba(0,0,0,0.6) 0, rgba(0,0,0,0.6) 2px, transparent 2px, transparent ${inchPx}px), repeating-linear-gradient(to right, rgba(0,0,0,0.3) 0, rgba(0,0,0,0.3) 1px, transparent 1px, transparent ${previewScale}px), repeating-linear-gradient(to bottom, rgba(0,0,0,0.3) 0, rgba(0,0,0,0.3) 1px, transparent 1px, transparent ${previewScale}px)`,
-                    backgroundSize: '100% 100%'
-                  }}
-                />
+                  position='relative'
+                  width={totalGridWidth * previewScale}
+                  height={totalGridHeight * previewScale}
+                  bg='#ddd'
+                >
+                  <Box
+                    position='absolute'
+                    left={borderPx}
+                    top={borderPx}
+                    width={gridWidth * previewScale}
+                    height={gridHeight * previewScale}
+                    bg='#f8f8f8'
+                  />
+                  <Box
+                    pointerEvents='none'
+                    position='absolute'
+                    left={0}
+                    top={0}
+                    right={0}
+                    bottom={0}
+                    style={{
+                      backgroundImage: `repeating-linear-gradient(to right, rgba(0,0,0,0.6) 0, rgba(0,0,0,0.6) 2px, transparent 2px, transparent ${inchPx}px), repeating-linear-gradient(to bottom, rgba(0,0,0,0.6) 0, rgba(0,0,0,0.6) 2px, transparent 2px, transparent ${inchPx}px), repeating-linear-gradient(to right, rgba(0,0,0,0.3) 0, rgba(0,0,0,0.3) 1px, transparent 1px, transparent ${previewScale}px), repeating-linear-gradient(to bottom, rgba(0,0,0,0.3) 0, rgba(0,0,0,0.3) 1px, transparent 1px, transparent ${previewScale}px)`,
+                      backgroundSize: '100% 100%'
+                    }}
+                  />
+                </Box>
               </Box>
             </Box>
             <Flex justify='space-between' mt={4}>
