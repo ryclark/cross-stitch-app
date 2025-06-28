@@ -1,4 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
+import {
+  Box,
+  Button,
+  Flex,
+  Input,
+  Select,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+  Stepper,
+  Step,
+  StepIndicator,
+  StepStatus,
+  StepIcon,
+  StepNumber,
+  StepTitle,
+  StepDescription,
+  StepSeparator,
+  Text
+} from '@chakra-ui/react';
 import Grid from './Grid';
 import { findClosestDmcColor, getColorUsage, reduceColors } from './utils';
 
@@ -11,11 +32,14 @@ export default function ImportWizard({
 }) {
   const containerSize = maxGridPx;
 
+  const [step, setStep] = useState(0); // 0-based index
+  const [fabricCount, setFabricCount] = useState(14);
+  const [widthIn, setWidthIn] = useState(4);
+  const [heightIn, setHeightIn] = useState(4);
+
+  // Crop state
   const minScale = containerSize / Math.max(img.width, img.height);
   const initialScale = containerSize / Math.min(img.width, img.height);
-
-  const [step, setStep] = useState(1);
-  const [size, setSize] = useState(initialSize);
   const [scale, setScale] = useState(initialScale);
   const scaleRef = useRef(initialScale);
   const [offset, setOffset] = useState({
@@ -28,6 +52,8 @@ export default function ImportWizard({
   const [preview, setPreview] = useState(null);
   const [reduceTo, setReduceTo] = useState(1);
   const [maxColors, setMaxColors] = useState(1);
+
+  const gridSize = Math.round(Math.max(widthIn, heightIn) * fabricCount);
 
   const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
 
@@ -72,6 +98,7 @@ export default function ImportWizard({
   }, [scale]);
 
   const generateGrid = () => {
+    const size = gridSize;
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = size;
     const ctx = canvas.getContext('2d');
@@ -94,160 +121,180 @@ export default function ImportWizard({
     return g;
   };
 
+  const nextStep = () => setStep(s => Math.min(s + 1, 4));
+  const prevStep = () => setStep(s => Math.max(s - 1, 0));
+
   const handleNext = () => {
-    const g = generateGrid();
-    setGrid(g);
-    const count = Object.keys(getColorUsage(g)).length;
-    setMaxColors(count);
-    setReduceTo(count);
-    setPreview(g);
-    setStep(2);
+    if (step === 2) {
+      const g = generateGrid();
+      setGrid(g);
+      const count = Object.keys(getColorUsage(g)).length;
+      setMaxColors(count);
+      setReduceTo(count);
+      setPreview(g);
+    }
+    if (step === 3) {
+      // proceed to done
+    }
+    nextStep();
   };
 
-  const handleBack = () => {
-    setStep(1);
+  const handleFinish = () => {
+    onComplete(preview);
   };
 
-  const handleReduceChange = e => {
-    const val = Number(e.target.value);
+  const handleReduceChange = val => {
     setReduceTo(val);
     setPreview(reduceColors(grid, val));
   };
 
-  const handleConfirm = () => {
-    onComplete(preview);
+  const steps = [
+    { title: 'Fabric', description: 'Select fabric type' },
+    { title: 'Size', description: 'Design dimensions' },
+    { title: 'Overlay', description: 'Position image' },
+    { title: 'Colors', description: 'Limit palette' },
+    { title: 'Done', description: 'Finish' }
+  ];
+
+  const overlayProps = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    bg: 'rgba(0,0,0,0.7)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000
   };
 
-  if (step === 1) {
-    const cellSize = containerSize / size;
-    return (
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.7)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}
-      >
-        <div>
-          <div
-            style={{
-              position: 'relative',
-              width: containerSize,
-              height: containerSize,
-              overflow: 'hidden',
-              background: '#fff',
-              margin: '0 auto',
-              cursor: 'move'
-            }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-          >
-            <img
-              src={img.src}
-              alt="crop"
-              style={{
-                position: 'absolute',
-                left: offset.x,
-                top: offset.y,
-                width: img.width * scale,
-                height: img.height * scale
-              }}
-            />
-            <div
-              style={{
-                pointerEvents: 'none',
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                right: 0,
-                bottom: 0,
-                backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.3) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.3) 1px, transparent 1px)`,
-                backgroundSize: `${cellSize}px ${cellSize}px`
-              }}
-            />
-          </div>
-          <div style={{ marginTop: 8, textAlign: 'center' }}>
-            <label>
-              Grid size:
-              <select
-                value={size}
-                onChange={e => setSize(Number(e.target.value))}
-                style={{ marginLeft: 8 }}
-              >
-                <option value={100}>100 x 100</option>
-                <option value={200}>200 x 200</option>
-                <option value={300}>300 x 300</option>
-              </select>
-            </label>
-          </div>
-          <div style={{ marginTop: 8, textAlign: 'center' }}>
-            <input
-              type="range"
-              min={minScale}
-              max={initialScale * 3}
-              step={0.1}
-              value={scale}
-              onChange={e => setScale(Number(e.target.value))}
-            />
-          </div>
-          <div style={{ marginTop: 8, textAlign: 'center' }}>
-            <button onClick={handleNext} style={{ marginRight: 8 }}>
-              Next
-            </button>
-            <button onClick={onCancel}>Cancel</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0,0,0,0.7)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000
-      }}
-    >
-      <div>
-        <Grid
-          grid={preview}
-          setGrid={() => {}}
-          selectedColor={null}
-          showGrid={false}
-          maxGridPx={maxGridPx}
-        />
-        <div style={{ marginTop: 8, textAlign: 'center' }}>
-          <input
-            type="range"
-            min={1}
-            max={maxColors}
-            value={reduceTo}
-            onChange={handleReduceChange}
-          />
-          <span style={{ marginLeft: 8 }}>{reduceTo} colors</span>
-        </div>
-        <div style={{ marginTop: 8, textAlign: 'center' }}>
-          <button onClick={handleBack} style={{ marginRight: 8 }}>
-            Back
-          </button>
-          <button onClick={handleConfirm}>Use Image</button>
-        </div>
-      </div>
-    </div>
+    <Box {...overlayProps}>
+      <Box bg='white' p={4} borderRadius='md'>
+        <Stepper index={step} mb={4} size='sm'>
+          {steps.map((s, i) => (
+            <Step key={i}>
+              <StepIndicator>
+                <StepStatus complete={<StepIcon />} incomplete={<StepNumber />} active={<StepNumber />} />
+              </StepIndicator>
+              <Box flexShrink='0'>
+                <StepTitle>{s.title}</StepTitle>
+                <StepDescription>{s.description}</StepDescription>
+              </Box>
+              <StepSeparator />
+            </Step>
+          ))}
+        </Stepper>
+
+        {step === 0 && (
+          <Box>
+            <Select value={fabricCount} onChange={e => setFabricCount(Number(e.target.value))} mb={2}>
+              <option value={11}>11-count Aida</option>
+              <option value={14}>14-count Aida</option>
+              <option value={16}>16-count Aida</option>
+              <option value={18}>18-count Aida</option>
+            </Select>
+            <Text fontSize='sm' mb={4}>
+              Fabric type is Aida and the number is stitches per inch. For example, 14-count Aida is Aida fabric with 14 stitches per inch.
+            </Text>
+            <Flex justify='flex-end'>
+              <Button mr={2} onClick={onCancel}>Cancel</Button>
+              <Button colorScheme='teal' onClick={handleNext}>Next</Button>
+            </Flex>
+          </Box>
+        )}
+
+        {step === 1 && (
+          <Box>
+            <Flex gap={2} mb={2} align='center'>
+              <Input type='number' value={widthIn} onChange={e => setWidthIn(Number(e.target.value))} placeholder='Width (in)' />
+              <Input type='number' value={heightIn} onChange={e => setHeightIn(Number(e.target.value))} placeholder='Height (in)' />
+            </Flex>
+            <Text fontSize='sm'>
+              Ratio {widthIn}:{heightIn}. Add a 2" border on each side for framing or hooping.
+              Total fabric ~ {(widthIn + 4).toFixed(1)}–{(widthIn + 6).toFixed(1)}" x {(heightIn + 4).toFixed(1)}–{(heightIn + 6).toFixed(1)}".
+            </Text>
+            <Flex justify='space-between' mt={4}>
+              <Button onClick={prevStep}>Back</Button>
+              <Button colorScheme='teal' onClick={handleNext}>Next</Button>
+            </Flex>
+          </Box>
+        )}
+
+        {step === 2 && (
+          <Box>
+            <Box
+              position='relative'
+              width={containerSize}
+              height={containerSize}
+              overflow='hidden'
+              bg='#fff'
+              m='0 auto'
+              cursor='move'
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+            >
+              <img
+                src={img.src}
+                alt='crop'
+                style={{ position: 'absolute', left: offset.x, top: offset.y, width: img.width * scale, height: img.height * scale }}
+              />
+              <Box
+                pointerEvents='none'
+                position='absolute'
+                left={0}
+                top={0}
+                right={0}
+                bottom={0}
+                style={{
+                  backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.3) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.3) 1px, transparent 1px)`,
+                  backgroundSize: `${containerSize / gridSize}px ${containerSize / gridSize}px`
+                }}
+              />
+            </Box>
+            <Box mt={2} textAlign='center'>
+              <Slider min={minScale} max={initialScale * 3} step={0.1} value={scale} onChange={setScale}>
+                <SliderTrack>
+                  <SliderFilledTrack />
+                </SliderTrack>
+                <SliderThumb />
+              </Slider>
+            </Box>
+            <Flex justify='space-between' mt={4}>
+              <Button onClick={prevStep}>Back</Button>
+              <Button colorScheme='teal' onClick={handleNext}>Next</Button>
+            </Flex>
+          </Box>
+        )}
+
+        {step === 3 && (
+          <Box>
+            <Grid grid={preview} setGrid={() => {}} selectedColor={null} showGrid={false} maxGridPx={maxGridPx} />
+            <Box mt={2} px={2}>
+              <Slider min={1} max={maxColors} value={reduceTo} onChange={handleReduceChange}>
+                <SliderTrack>
+                  <SliderFilledTrack />
+                </SliderTrack>
+                <SliderThumb />
+              </Slider>
+              <Text mt={1} textAlign='center'>{reduceTo} colors</Text>
+            </Box>
+            <Flex justify='space-between' mt={4}>
+              <Button onClick={prevStep}>Back</Button>
+              <Button colorScheme='teal' onClick={handleNext}>Next</Button>
+            </Flex>
+          </Box>
+        )}
+
+        {step === 4 && (
+          <Box textAlign='center'>
+            <Text mb={4}>All set! Use this image?</Text>
+            <Button colorScheme='teal' mr={2} onClick={handleFinish}>Use Image</Button>
+            <Button onClick={onCancel}>Cancel</Button>
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 }
