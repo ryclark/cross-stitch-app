@@ -78,14 +78,16 @@ export function findClosestDmcColor(rgb) {
 
 // Export the grid as PNG (with optional grid overlay)
 export function exportGridAsPng(grid, cellSize, showGrid) {
-  const size = grid.length;
+  const rows = grid.length;
+  const cols = grid[0]?.length || 0;
   const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = size * cellSize;
+  canvas.width = cols * cellSize;
+  canvas.height = rows * cellSize;
   const ctx = canvas.getContext('2d');
 
   // Draw cells
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
       ctx.fillStyle = grid[y][x] || '#fff';
       ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
     }
@@ -94,14 +96,16 @@ export function exportGridAsPng(grid, cellSize, showGrid) {
   // Optional grid overlay
   if (showGrid) {
     ctx.strokeStyle = '#888';
-    for (let i = 0; i <= size; i++) {
+    for (let i = 0; i <= cols; i++) {
       ctx.beginPath();
       ctx.moveTo(i * cellSize, 0);
-      ctx.lineTo(i * cellSize, size * cellSize);
+      ctx.lineTo(i * cellSize, rows * cellSize);
       ctx.stroke();
+    }
+    for (let j = 0; j <= rows; j++) {
       ctx.beginPath();
-      ctx.moveTo(0, i * cellSize);
-      ctx.lineTo(size * cellSize, i * cellSize);
+      ctx.moveTo(0, j * cellSize);
+      ctx.lineTo(cols * cellSize, j * cellSize);
       ctx.stroke();
     }
   }

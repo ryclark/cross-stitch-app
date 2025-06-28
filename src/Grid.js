@@ -9,8 +9,9 @@ function hexToDmc(hex) {
 }
 
 export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx = 400 }) {
-  const size = grid.length;
-  const cellSize = Math.floor(maxGridPx / size);
+  const rows = grid.length;
+  const cols = grid[0]?.length || 0;
+  const cellSize = Math.floor(maxGridPx / Math.max(rows, cols));
 
   const handleCellClick = (y, x) => {
     setGrid(prev =>
@@ -25,10 +26,10 @@ export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx
   return (
     <Box
       display="grid"
-      gridTemplateRows={`repeat(${size}, ${cellSize}px)`}
-      gridTemplateColumns={`repeat(${size}, ${cellSize}px)`}
+      gridTemplateRows={`repeat(${rows}, ${cellSize}px)`}
+      gridTemplateColumns={`repeat(${cols}, ${cellSize}px)`}
       border="2px solid #444"
-      w={cellSize * size}
+      w={cellSize * cols}
       m="auto"
     >
       {grid.map((row, y) =>
