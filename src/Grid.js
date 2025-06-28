@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box } from '@chakra-ui/react';
 import { DMC_COLORS } from './ColorPalette';
 
 function hexToDmc(hex) {
@@ -22,33 +23,29 @@ export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx
   };
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateRows: `repeat(${size}, ${cellSize}px)`,
-        gridTemplateColumns: `repeat(${size}, ${cellSize}px)`,
-        border: '2px solid #444',
-        width: cellSize * size,
-        margin: 'auto'
-      }}
+    <Box
+      display="grid"
+      gridTemplateRows={`repeat(${size}, ${cellSize}px)`}
+      gridTemplateColumns={`repeat(${size}, ${cellSize}px)`}
+      border="2px solid #444"
+      w={cellSize * size}
+      m="auto"
     >
       {grid.map((row, y) =>
         row.map((color, x) => (
-          <div
+          <Box
             key={`${y}-${x}`}
             onClick={() => handleCellClick(y, x)}
-            style={{
-              width: cellSize,
-              height: cellSize,
-              background: color || '#fff',
-              border: showGrid ? '1px solid #ccc' : 'none',
-              boxSizing: 'border-box',
-              cursor: 'pointer'
-            }}
+            w={cellSize}
+            h={cellSize}
+            bg={color || '#fff'}
+            border={showGrid ? '1px solid #ccc' : 'none'}
+            boxSizing="border-box"
+            cursor="pointer"
             title={hexToDmc(color) || `(${x + 1}, ${y + 1})`}
           />
         ))
       )}
-    </div>
+    </Box>
   );
 }

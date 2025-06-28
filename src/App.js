@@ -4,6 +4,15 @@ import ColorPalette from './ColorPalette';
 import { exportGridAsPng, findClosestDmcColor } from './utils';
 import { saveAs } from 'file-saver';
 import ImageCropper from './ImageCropper';
+import {
+  Box,
+  Flex,
+  Button,
+  Input,
+  Checkbox,
+  Heading,
+  Text
+} from '@chakra-ui/react';
 
 function emptyGrid(size) {
   return Array.from({ length: size }, () => Array(size).fill(''));
@@ -135,33 +144,37 @@ export default function App() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: '30px auto', fontFamily: 'sans-serif', textAlign: 'center' }}>
-      <h2>🧵 Cross Stitch Pattern Creator</h2>
-      <div style={{ margin: '10px 0' }}>
+    <Box maxW="600px" m="30px auto" textAlign="center" fontFamily="sans-serif">
+      <Heading as="h2" size="md" mb={2}>
+        🧵 Cross Stitch Pattern Creator
+      </Heading>
+      <Flex my={2} align="center" justify="center">
         <label>
           Grid size:
-          <input
+          <Input
             type="number"
             min="2"
             max="40"
             value={size}
             onChange={handleSizeChange}
-            style={{ width: 50, marginLeft: 8 }}
+            w="50px"
+            ml={2}
+            display="inline-block"
           />
         </label>
-        <button onClick={handleNewGrid} style={{ marginLeft: 8 }}>Clear Grid</button>
-      </div>
+        <Button onClick={handleNewGrid} ml={2}>
+          Clear Grid
+        </Button>
+      </Flex>
       <ColorPalette selected={selectedColor} setSelected={setSelectedColor} />
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={showGrid}
-            onChange={() => setShowGrid(g => !g)}
-          />{' '}
+      <Box>
+        <Checkbox
+          isChecked={showGrid}
+          onChange={() => setShowGrid(g => !g)}
+        >
           Show Grid
-        </label>
-      </div>
+        </Checkbox>
+      </Box>
       <Grid
         grid={grid}
         setGrid={setGrid}
@@ -170,40 +183,37 @@ export default function App() {
         maxGridPx={maxGridPx}
       />
 
-      <div style={{ margin: '16px 0', display: 'flex', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
-        <button onClick={handleLocalSave}>Save to Browser</button>
-        <button onClick={handleLocalLoad}>Load from Browser</button>
-        <button onClick={handleExportJSON}>Export JSON</button>
-        <label style={{ cursor: 'pointer' }}>
-          <input
+      <Flex mt={4} mb={4} justify="center" gap={2} flexWrap="wrap">
+        <Button onClick={handleLocalSave}>Save to Browser</Button>
+        <Button onClick={handleLocalLoad}>Load from Browser</Button>
+        <Button onClick={handleExportJSON}>Export JSON</Button>
+        <Button as="label" cursor="pointer">
+          <Input
             type="file"
             accept="application/json"
-            style={{ display: 'none' }}
+            display="none"
             onChange={handleFile}
             ref={jsonInputRef}
           />
           Import JSON
-        </label>
-        <button onClick={handleExportPNG}>Export PNG</button>
-        {/* Image upload */}
-        <input
+        </Button>
+        <Button onClick={handleExportPNG}>Export PNG</Button>
+        <Input
           type="file"
           accept="image/*"
-          style={{ display: 'none' }}
+          display="none"
           ref={fileInputRef}
           onChange={e => handleImageUpload(e.target.files[0])}
         />
-        <button
-          onClick={() => fileInputRef.current && fileInputRef.current.click()}
-        >
+        <Button onClick={() => fileInputRef.current && fileInputRef.current.click()}>
           Import from Image
-        </button>
-      </div>
-      <small>
+        </Button>
+      </Flex>
+      <Text fontSize="sm">
         Designs are saved locally. PNG export uses your browser. <br />
         Image import maps to the closest DMC floss color. <br />
         Made with React. Enjoy!
-      </small>
+      </Text>
       {croppingImage && (
         <ImageCropper
           img={croppingImage}
@@ -213,6 +223,6 @@ export default function App() {
           onApply={handleCropApply}
         />
       )}
-    </div>
+    </Box>
   );
 }
