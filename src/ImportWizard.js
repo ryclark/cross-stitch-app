@@ -61,6 +61,13 @@ export default function ImportWizard({
   const gridWidth = Math.round(widthIn * fabricCount);
   const gridHeight = Math.round(heightIn * fabricCount);
 
+  // Size preview scale so the entire design fits inside the wizard
+  const previewScale = Math.min(
+    containerSize / gridWidth,
+    containerSize / gridHeight
+  );
+  const inchPx = fabricCount * previewScale;
+
   const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
 
   const updateOffset = (x, y, s) => {
@@ -271,6 +278,19 @@ export default function ImportWizard({
               Ratio {widthIn}:{heightIn}. Add a 2" border on each side for framing or hooping.
               Total fabric ~ {(widthIn + 4).toFixed(1)}–{(widthIn + 6).toFixed(1)}" x {(heightIn + 4).toFixed(1)}–{(heightIn + 6).toFixed(1)}".
             </Text>
+            <Box textAlign='center' mt={4}>
+              <Box bg='#666' display='inline-block' p={1}>
+                <Box
+                  width={gridWidth * previewScale}
+                  height={gridHeight * previewScale}
+                  bg='#f8f8f8'
+                  style={{
+                    backgroundImage: `repeating-linear-gradient(to right, rgba(0,0,0,0.6) 0, rgba(0,0,0,0.6) 2px, transparent 2px, transparent ${inchPx}px), repeating-linear-gradient(to bottom, rgba(0,0,0,0.6) 0, rgba(0,0,0,0.6) 2px, transparent 2px, transparent ${inchPx}px), repeating-linear-gradient(to right, rgba(0,0,0,0.3) 0, rgba(0,0,0,0.3) 1px, transparent 1px, transparent ${previewScale}px), repeating-linear-gradient(to bottom, rgba(0,0,0,0.3) 0, rgba(0,0,0,0.3) 1px, transparent 1px, transparent ${previewScale}px)`,
+                    backgroundSize: '100% 100%'
+                  }}
+                />
+              </Box>
+            </Box>
             <Flex justify='space-between' mt={4}>
               <Button onClick={prevStep}>Back</Button>
               <Button colorScheme='teal' onClick={handleNext}>Next</Button>
