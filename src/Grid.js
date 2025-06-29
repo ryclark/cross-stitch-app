@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Tooltip } from '@chakra-ui/react';
 import { DMC_COLORS } from './ColorPalette';
+import { overlayShade } from './utils';
 
 function hexToDmc(hex) {
   if (!hex) return null;
@@ -16,7 +17,8 @@ export default function Grid({
   maxGridPx = 400,
   activeCell = null,
   activeColor = null,
-  onCellClick = null
+  onCellClick = null,
+  markComplete = false
 }) {
   const rows = grid.length;
   const cols = grid[0]?.length || 0;
@@ -68,7 +70,14 @@ export default function Grid({
                 boxSizing="border-box"
                 cursor="pointer"
                 opacity={dimmed ? 0.3 : 1}
-              />
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                color={markComplete ? overlayShade(color || '#fff') : 'inherit'}
+                fontWeight={markComplete ? 'bold' : 'normal'}
+              >
+                {markComplete ? 'X' : null}
+              </Box>
             </Tooltip>
           );
         })
