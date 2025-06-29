@@ -387,6 +387,16 @@ export default function ImportWizard({
                     backgroundSize: '100% 100%'
                   }}
                 />
+                <Box
+                  pointerEvents='none'
+                  position='absolute'
+                  left={0}
+                  top={0}
+                  right={0}
+                  bottom={0}
+                  borderRight='2px solid rgba(0,0,0,1)'
+                  borderBottom='2px solid rgba(0,0,0,1)'
+                />
               </Box>
             </Box>
             <Flex justify='space-between' mt={4}>
