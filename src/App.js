@@ -90,14 +90,14 @@ export default function App() {
   };
 
   return (
-    <>
+    <Box minH="100vh" display="flex" flexDirection="column">
       <Header />
       <Box
+        flex="1"
         display="flex"
         alignItems="center"
         justifyContent="center"
         flexDirection="column"
-        height="70vh"
       >
         {!pattern && (
           <>
@@ -254,6 +254,6 @@ export default function App() {
           </DrawerContent>
         </Drawer>
       )}
-    </>
+    </Box>
   );
 }
