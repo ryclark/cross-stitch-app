@@ -126,7 +126,13 @@ export default function App() {
               showGrid={showGridLines}
               maxGridPx={500}
             />
-            <FormControl display="flex" alignItems="center" mt={2}>
+            <FormControl
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              mt={2}
+              width="fit-content"
+            >
               <FormLabel htmlFor="grid-toggle" mb="0">
                 Show grid
               </FormLabel>
