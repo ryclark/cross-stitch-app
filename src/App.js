@@ -11,7 +11,10 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerBody,
-  DrawerCloseButton
+  DrawerCloseButton,
+  Switch,
+  FormControl,
+  FormLabel
 } from '@chakra-ui/react';
 import Grid from './Grid';
 import UsedColors from './UsedColors';
@@ -26,6 +29,7 @@ export default function App() {
   const [importImage, setImportImage] = useState(null);
   const [showImageOptions, setShowImageOptions] = useState(false);
   const [pattern, setPattern] = useState(null);
+  const [showGridLines, setShowGridLines] = useState(false);
   const fileInputRef = useRef();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -43,6 +47,7 @@ export default function App() {
 
   const handleWizardComplete = details => {
     setPattern(details);
+    setShowGridLines(false);
     setImportImage(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
@@ -114,7 +119,23 @@ export default function App() {
         )}
         {pattern && (
           <>
-            <Grid grid={pattern.grid} setGrid={() => {}} selectedColor={null} showGrid maxGridPx={500} />
+            <Grid
+              grid={pattern.grid}
+              setGrid={() => {}}
+              selectedColor={null}
+              showGrid={showGridLines}
+              maxGridPx={500}
+            />
+            <FormControl display="flex" alignItems="center" mt={2}>
+              <FormLabel htmlFor="grid-toggle" mb="0">
+                Show grid
+              </FormLabel>
+              <Switch
+                id="grid-toggle"
+                isChecked={showGridLines}
+                onChange={e => setShowGridLines(e.target.checked)}
+              />
+            </FormControl>
             <Button mt={4} colorScheme="teal" onClick={onOpen}>
               Pattern Details
             </Button>
