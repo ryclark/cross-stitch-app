@@ -25,7 +25,6 @@ export default function DeepDive() {
   const cellSize = Math.floor((maxGridPx - BORDER) / Math.max(rows, cols));
   const gridWidth = cellSize * cols + BORDER;
   const gridHeight = cellSize * rows + BORDER;
-  const borderOffset = BORDER / 2; // offset for the 2px grid border
   const inchPx = cellSize * fabricCount;
   const inchCols = Math.ceil(cols / fabricCount);
   const inchRows = Math.ceil(rows / fabricCount);
@@ -121,21 +120,15 @@ export default function DeepDive() {
             maxGridPx={maxGridPx}
             completedCells={completedCells}
           />
-          <Box
-            position="absolute"
-            top={borderOffset}
-            left={borderOffset}
-            right={borderOffset}
-            bottom={borderOffset}
-          >
+          <Box position="absolute" top={0} left={0} right={0} bottom={0}>
             {overlays}
           </Box>
           {active && (
             <Box
               pointerEvents="none"
               position="absolute"
-              left={borderOffset + active.x * inchPx}
-              top={borderOffset + active.y * inchPx}
+              left={active.x * inchPx}
+              top={active.y * inchPx}
               width={active.w}
               height={active.h}
               boxShadow="0 0 0 9999px rgba(0,0,0,0.5)"
