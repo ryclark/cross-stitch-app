@@ -30,7 +30,6 @@ import Grid from './Grid';
 import { findClosestDmcColor, getColorUsage, reduceColors } from './utils';
 import Collapsible from './Collapsible';
 import UsedColors from './UsedColors';
-import NumberInputRoot from './NumberInputRoot';
 
 export default function ImportWizard({
   img,
@@ -136,7 +135,6 @@ export default function ImportWizard({
       offset.y + (img.height * prev - img.height * scale) / 2,
       scale
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scale]);
 
   const generateGrid = () => {
@@ -366,25 +364,20 @@ export default function ImportWizard({
                 }
               }}>
                   <InputGroup>
-                    <NumberInputRoot
+                    <NumberInput
                       value={heightIn}
                       onChange={(_, v) => setHeightIn(v)}
                       min={2}
                       max={10}
                       width='full'
-                      formatOptions={{
-                        style: 'unit',
-                        unit: 'inch',
-                        unitDisplay: 'long'
-                      }}
                     >
                       <NumberInputField
                         placeholder=' '
                         data-has-value={heightIn > 0}
                       />
-                    </NumberInputRoot>
-                  <InputRightAddon>Inches</InputRightAddon>
-                </InputGroup>
+                    </NumberInput>
+                    <InputRightAddon>Inches</InputRightAddon>
+                  </InputGroup>
                 <FormLabel>Height</FormLabel>
                 <FormErrorMessage>
                   Patterns need to be at least 2 inches by 2 inches
