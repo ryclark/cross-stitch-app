@@ -112,3 +112,27 @@ export function exportGridAsPng(grid, cellSize, showGrid) {
 
   return canvas.toDataURL('image/png');
 }
+
+// Lighten or darken a hex color by a percentage (-1 to 1)
+export function shadeColor(hex, percent) {
+  const [r, g, b] = hexToRgb(hex);
+  const t = percent < 0 ? 0 : 255;
+  const p = Math.abs(percent);
+  const R = Math.round((t - r) * p) + r;
+  const G = Math.round((t - g) * p) + g;
+  const B = Math.round((t - b) * p) + b;
+  return (
+    '#' +
+    [R, G, B]
+      .map(v => v.toString(16).padStart(2, '0'))
+      .join('')
+  );
+}
+
+// Choose a contrasting shade for overlaying text on a cell color
+export function overlayShade(hex) {
+  const [r, g, b] = hexToRgb(hex);
+  const brightness = (r * 299 + g * 587 + b * 114) / 255000;
+  // If the color is bright, darken the shade, else lighten it
+  return shadeColor(hex, brightness > 0.6 ? -0.4 : 0.4);
+}

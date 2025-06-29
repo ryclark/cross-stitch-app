@@ -32,6 +32,7 @@ export default function DeepDive() {
   const [selected, setSelected] = useState(null);
   const [focusedCell, setFocusedCell] = useState(null);
   const [focusedColor, setFocusedColor] = useState(null);
+  const [sectionComplete, setSectionComplete] = useState(false);
 
   const overlays = [];
   for (let y = 0; y < inchRows; y++) {
@@ -63,6 +64,7 @@ export default function DeepDive() {
   useEffect(() => {
     setFocusedCell(null);
     setFocusedColor(null);
+    setSectionComplete(false);
   }, [active]);
 
   const subGrid = active
@@ -105,19 +107,20 @@ export default function DeepDive() {
         </Box>
         {active && (
           <Box>
-            <Grid
-              grid={subGrid}
-              setGrid={() => {}}
-              selectedColor={null}
-              showGrid={true}
-              maxGridPx={300}
-              activeCell={focusedCell}
-              activeColor={focusedColor}
-              onCellClick={(y, x, color) => {
-                setFocusedCell(null);
-                setFocusedColor(color);
-              }}
-            />
+          <Grid
+            grid={subGrid}
+            setGrid={() => {}}
+            selectedColor={null}
+            showGrid={true}
+            maxGridPx={300}
+            activeCell={focusedCell}
+            activeColor={focusedColor}
+            markComplete={sectionComplete}
+            onCellClick={(y, x, color) => {
+              setFocusedCell(null);
+              setFocusedColor(color);
+            }}
+          />
             <Box mt={2}>
               <UsedColors
                 colors={Object.keys(colorUsage)}
@@ -128,6 +131,13 @@ export default function DeepDive() {
                   setFocusedColor(color);
                 }}
               />
+              <Button
+                mt={2}
+                colorScheme="teal"
+                onClick={() => setSectionComplete(prev => !prev)}
+              >
+                {sectionComplete ? 'Revisit Section' : 'Section Complete'}
+              </Button>
             </Box>
           </Box>
         )}
