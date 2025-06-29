@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Flex, Button } from '@chakra-ui/react';
 import UsedColors from './UsedColors';
 import { getColorUsage } from './utils';
@@ -30,6 +30,8 @@ export default function DeepDive() {
 
   const [hover, setHover] = useState(null);
   const [selected, setSelected] = useState(null);
+  const [focusedCell, setFocusedCell] = useState(null);
+  const [focusedColor, setFocusedColor] = useState(null);
 
   const overlays = [];
   for (let y = 0; y < inchRows; y++) {
@@ -57,6 +59,11 @@ export default function DeepDive() {
   }
 
   const active = selected || hover;
+
+  useEffect(() => {
+    setFocusedCell(null);
+    setFocusedColor(null);
+  }, [active]);
 
   const subGrid = active
     ? grid
@@ -104,11 +111,22 @@ export default function DeepDive() {
               selectedColor={null}
               showGrid={true}
               maxGridPx={300}
+              activeCell={focusedCell}
+              activeColor={focusedColor}
+              onCellClick={(y, x, color) => {
+                setFocusedCell({ y, x });
+                setFocusedColor(color);
+              }}
             />
             <Box mt={2}>
               <UsedColors
                 colors={Object.keys(colorUsage)}
                 usage={colorUsage}
+                activeColor={focusedColor}
+                onColorClick={color => {
+                  setFocusedCell(null);
+                  setFocusedColor(color);
+                }}
               />
             </Box>
           </Box>

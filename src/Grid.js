@@ -8,20 +8,32 @@ function hexToDmc(hex) {
   return found ? `${found.name} (#${found.code})` : null;
 }
 
-export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx = 400 }) {
+export default function Grid({
+  grid,
+  setGrid,
+  selectedColor,
+  showGrid,
+  maxGridPx = 400,
+  activeCell = null,
+  activeColor = null,
+  onCellClick = null
+}) {
   const rows = grid.length;
   const cols = grid[0]?.length || 0;
   const BORDER = 4; // total px for the 2px border around the grid
   const cellSize = Math.floor((maxGridPx - BORDER) / Math.max(rows, cols));
 
   const handleCellClick = (y, x) => {
-    setGrid(prev =>
-      prev.map((row, rowIdx) =>
-        rowIdx === y
-          ? row.map((cell, colIdx) => (colIdx === x ? selectedColor : cell))
-          : row
-      )
-    );
+    if (onCellClick) onCellClick(y, x, grid[y][x]);
+    if (setGrid && selectedColor !== undefined && selectedColor !== null) {
+      setGrid(prev =>
+        prev.map((row, rowIdx) =>
+          rowIdx === y
+            ? row.map((cell, colIdx) => (colIdx === x ? selectedColor : cell))
+            : row
+        )
+      );
+    }
   };
 
   return (
@@ -40,6 +52,11 @@ export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx
       {grid.map((row, y) =>
         row.map((color, x) => {
           const dmcLabel = hexToDmc(color) || `(${x + 1}, ${y + 1})`;
+          const dimmed = activeCell
+            ? !(activeCell.y === y && activeCell.x === x)
+            : activeColor
+            ? color !== activeColor
+            : false;
           return (
             <Tooltip key={`${y}-${x}`} label={dmcLabel} hasArrow>
               <Box
@@ -50,6 +67,7 @@ export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx
                 border={showGrid ? '1px solid #ccc' : 'none'}
                 boxSizing="border-box"
                 cursor="pointer"
+                opacity={dimmed ? 0.3 : 1}
               />
             </Tooltip>
           );
