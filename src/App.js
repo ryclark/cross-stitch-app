@@ -103,7 +103,9 @@ export default function App() {
     return (
       <Box minH="100vh" display="flex" flexDirection="column">
         <Header />
-        <DeepDive />
+        <Box flex="1">
+          <DeepDive />
+        </Box>
         <Footer />
       </Box>
     );
