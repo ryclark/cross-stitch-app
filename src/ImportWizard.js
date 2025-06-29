@@ -30,6 +30,7 @@ import Grid from './Grid';
 import { findClosestDmcColor, getColorUsage, reduceColors } from './utils';
 import Collapsible from './Collapsible';
 import UsedColors from './UsedColors';
+import NumberInputRoot from './NumberInputRoot';
 
 export default function ImportWizard({
   img,
@@ -364,19 +365,24 @@ export default function ImportWizard({
                   transition: 'transform 0.2s ease-in-out'
                 }
               }}>
-                <InputGroup>
-                  <NumberInput
-                    value={heightIn}
-                    onChange={(_, v) => setHeightIn(v)}
-                    min={2}
-                    max={10}
-                    width='full'
-                  >
-                    <NumberInputField
-                      placeholder=' '
-                      data-has-value={heightIn > 0}
-                    />
-                  </NumberInput>
+                  <InputGroup>
+                    <NumberInputRoot
+                      value={heightIn}
+                      onChange={(_, v) => setHeightIn(v)}
+                      min={2}
+                      max={10}
+                      width='full'
+                      formatOptions={{
+                        style: 'unit',
+                        unit: 'inch',
+                        unitDisplay: 'long'
+                      }}
+                    >
+                      <NumberInputField
+                        placeholder=' '
+                        data-has-value={heightIn > 0}
+                      />
+                    </NumberInputRoot>
                   <InputRightAddon>Inches</InputRightAddon>
                 </InputGroup>
                 <FormLabel>Height</FormLabel>
