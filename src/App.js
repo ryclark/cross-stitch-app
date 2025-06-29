@@ -16,7 +16,7 @@ import {
   FormControl,
   FormLabel
 } from '@chakra-ui/react';
-import Grid from './Grid';
+import GridMagnifier from './GridMagnifier';
 import UsedColors from './UsedColors';
 import ImportWizard from './ImportWizard';
 import Header from './Header';
@@ -119,10 +119,8 @@ export default function App() {
         )}
         {pattern && (
           <>
-            <Grid
+            <GridMagnifier
               grid={pattern.grid}
-              setGrid={() => {}}
-              selectedColor={null}
               showGrid={showGridLines}
               maxGridPx={500}
             />
