@@ -220,6 +220,28 @@ export default function App() {
               <Box mb={4}>
                 <strong>Dimensions:</strong> {pattern.widthIn}&quot; x {pattern.heightIn}&quot;
               </Box>
+              <Box mb={4}>
+                {(() => {
+                  const stitches = pattern.grid.length * (pattern.grid[0]?.length || 0);
+                  const fmt = (min, max) => {
+                    const minHrs = (stitches / max).toFixed(1);
+                    const maxHrs = (stitches / min).toFixed(1);
+                    return `${minHrs}-${maxHrs}`;
+                  };
+                  return (
+                    <>
+                      <strong>Estimated Time (hrs)</strong>
+                      <Box fontSize="sm" mt={1}>
+                        Beginner (40-50 sph): {fmt(40, 50)}
+                        <br />
+                        Average (60-80 sph): {fmt(60, 80)}
+                        <br />
+                        Experienced (100-150 sph): {fmt(100, 150)}
+                      </Box>
+                    </>
+                  );
+                })()}
+              </Box>
               <Box mb={2}>
                 <strong>Colors</strong>
               </Box>
