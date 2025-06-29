@@ -79,7 +79,7 @@ export default function DeepDive() {
         Back
       </Button>
       <Flex gap={4} flexDir={{ base: 'column', md: 'row' }} align="flex-start">
-        <Box position="relative" width={gridWidth} height={gridHeight} flexShrink={0}>
+        <Box position="relative" width={gridWidth} height={gridHeight} flexShrink={0} overflow="hidden">
           <Grid
             grid={grid}
             setGrid={() => {}}
@@ -114,7 +114,7 @@ export default function DeepDive() {
               activeCell={focusedCell}
               activeColor={focusedColor}
               onCellClick={(y, x, color) => {
-                setFocusedCell({ y, x });
+                setFocusedCell(null);
                 setFocusedColor(color);
               }}
             />
