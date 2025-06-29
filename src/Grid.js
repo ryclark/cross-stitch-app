@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Tooltip } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { DMC_COLORS } from './ColorPalette';
 import { overlayShade } from './utils';
 
@@ -64,25 +64,25 @@ export default function Grid({
           const isComplete =
             markComplete || (completedCells && completedCells.has(cellKey));
           return (
-            <Tooltip key={`${y}-${x}`} label={dmcLabel} hasArrow>
-              <Box
-                onClick={() => handleCellClick(y, x)}
-                w={cellSize}
-                h={cellSize}
-                bg={color || '#fff'}
-                border={showGrid ? '1px solid #ccc' : 'none'}
-                boxSizing="border-box"
-                cursor="pointer"
-                opacity={dimmed ? 0.3 : 1}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                color={isComplete ? overlayShade(color || '#fff') : 'inherit'}
-                fontWeight={isComplete ? 'bold' : 'normal'}
-              >
-                {isComplete ? 'X' : null}
-              </Box>
-            </Tooltip>
+            <Box
+              key={`${y}-${x}`}
+              onClick={() => handleCellClick(y, x)}
+              w={cellSize}
+              h={cellSize}
+              bg={color || '#fff'}
+              border={showGrid ? '1px solid #ccc' : 'none'}
+              boxSizing="border-box"
+              cursor="pointer"
+              opacity={dimmed ? 0.3 : 1}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              color={isComplete ? overlayShade(color || '#fff') : 'inherit'}
+              fontWeight={isComplete ? 'bold' : 'normal'}
+              title={dmcLabel}
+            >
+              {isComplete ? 'X' : null}
+            </Box>
           );
         })
       )}
