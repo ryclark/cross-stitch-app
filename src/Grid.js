@@ -11,7 +11,8 @@ function hexToDmc(hex) {
 export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx = 400 }) {
   const rows = grid.length;
   const cols = grid[0]?.length || 0;
-  const cellSize = Math.floor(maxGridPx / Math.max(rows, cols));
+  const BORDER = 4; // total px for the 2px border around the grid
+  const cellSize = Math.floor((maxGridPx - BORDER) / Math.max(rows, cols));
 
   const handleCellClick = (y, x) => {
     setGrid(prev =>
@@ -29,7 +30,11 @@ export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx
       gridTemplateRows={`repeat(${rows}, ${cellSize}px)`}
       gridTemplateColumns={`repeat(${cols}, ${cellSize}px)`}
       border="2px solid #444"
-      w={cellSize * cols}
+      boxSizing="border-box"
+      boxSizing="border-box"
+      w={cellSize * cols + BORDER}
+      h={cellSize * rows + BORDER}
+      overflow="hidden"
       m="auto"
     >
       {grid.map((row, y) =>
