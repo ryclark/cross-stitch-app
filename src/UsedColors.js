@@ -2,15 +2,18 @@ import React from 'react';
 import { Flex, Box, Text, Tooltip } from '@chakra-ui/react';
 import { DMC_COLORS } from './ColorPalette';
 
-export default function UsedColors({ colors, usage = {} }) {
+export default function UsedColors({ colors, usage = {}, showSkeins = false }) {
   return (
     <Flex wrap="wrap" gap={2} justify="center">
       {colors.map(hex => {
         const dmc = DMC_COLORS.find(c => c.hex.toLowerCase() === hex.toLowerCase());
         const count = usage[hex] || 0;
+        const skeins = showSkeins && count
+          ? ` - ${(count / 1800).toFixed(2)} skeins`
+          : '';
         const label = dmc
-          ? `${dmc.name} (#${dmc.code})${count ? ` - ${count} stitches` : ''}`
-          : `${hex}${count ? ` - ${count} stitches` : ''}`;
+          ? `${dmc.name} (#${dmc.code})${count ? ` - ${count} stitches` : ''}${skeins}`
+          : `${hex}${count ? ` - ${count} stitches` : ''}${skeins}`;
         return (
           <Tooltip key={hex} label={label} hasArrow>
             <Box textAlign="center" fontSize="11px">
