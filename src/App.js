@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Image,
+  Input,
   SimpleGrid,
   useDisclosure,
   Drawer,
@@ -95,10 +96,10 @@ export default function App() {
       >
         {!pattern && (
           <>
-            <input
+            <Input
               type="file"
               accept="image/*"
-              style={{ display: 'none' }}
+              display="none"
               ref={fileInputRef}
               onChange={e => handleImageUpload(e.target.files[0])}
             />
