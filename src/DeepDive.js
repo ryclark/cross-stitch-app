@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Flex, Button } from '@chakra-ui/react';
+import UsedColors from './UsedColors';
+import { getColorUsage } from './utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Grid from './Grid';
 
@@ -27,6 +29,7 @@ export default function DeepDive() {
   const inchRows = Math.ceil(rows / fabricCount);
 
   const [hover, setHover] = useState(null);
+  const [selected, setSelected] = useState(null);
 
   const overlays = [];
   for (let y = 0; y < inchRows; y++) {
@@ -41,18 +44,27 @@ export default function DeepDive() {
           top={y * inchPx}
           width={w}
           height={h}
-          onMouseEnter={() => setHover({ x, y, w, h })}
-          onMouseLeave={() => setHover(null)}
+          cursor="pointer"
+          onMouseEnter={() => !selected && setHover({ x, y, w, h })}
+          onMouseLeave={() => !selected && setHover(null)}
+          onClick={() => {
+            setSelected({ x, y, w, h });
+            setHover(null);
+          }}
         />
       );
     }
   }
 
-  const subGrid = hover
+  const active = selected || hover;
+
+  const subGrid = active
     ? grid
-        .slice(hover.y * fabricCount, hover.y * fabricCount + fabricCount)
-        .map(row => row.slice(hover.x * fabricCount, hover.x * fabricCount + fabricCount))
+        .slice(active.y * fabricCount, active.y * fabricCount + fabricCount)
+        .map(row => row.slice(active.x * fabricCount, active.x * fabricCount + fabricCount))
     : null;
+
+  const colorUsage = subGrid ? getColorUsage(subGrid) : {};
 
   return (
     <Box p={4}>
@@ -71,20 +83,20 @@ export default function DeepDive() {
           <Box position="absolute" top={0} left={0} right={0} bottom={0}>
             {overlays}
           </Box>
-          {hover && (
+          {active && (
             <Box
               pointerEvents="none"
               position="absolute"
-              left={hover.x * inchPx}
-              top={hover.y * inchPx}
-              width={hover.w}
-              height={hover.h}
+              left={active.x * inchPx}
+              top={active.y * inchPx}
+              width={active.w}
+              height={active.h}
               boxShadow="0 0 0 9999px rgba(0,0,0,0.5)"
               border="2px solid teal"
             />
           )}
         </Box>
-        {hover && (
+        {active && (
           <Box>
             <Grid
               grid={subGrid}
@@ -93,6 +105,12 @@ export default function DeepDive() {
               showGrid={true}
               maxGridPx={300}
             />
+            <Box mt={2}>
+              <UsedColors
+                colors={Object.keys(colorUsage)}
+                usage={colorUsage}
+              />
+            </Box>
           </Box>
         )}
       </Flex>
