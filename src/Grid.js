@@ -1,11 +1,11 @@
 import React from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, Tooltip } from '@chakra-ui/react';
 import { DMC_COLORS } from './ColorPalette';
 
 function hexToDmc(hex) {
-  if (!hex) return '';
+  if (!hex) return null;
   const found = DMC_COLORS.find(c => c.hex.toLowerCase() === hex.toLowerCase());
-  return found ? `${found.code} (${found.name})` : '';
+  return found ? `${found.name} (#${found.code})` : null;
 }
 
 export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx = 400 }) {
@@ -38,19 +38,22 @@ export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx
       m="auto"
     >
       {grid.map((row, y) =>
-        row.map((color, x) => (
-          <Box
-            key={`${y}-${x}`}
-            onClick={() => handleCellClick(y, x)}
-            w={cellSize}
-            h={cellSize}
-            bg={color || '#fff'}
-            border={showGrid ? '1px solid #ccc' : 'none'}
-            boxSizing="border-box"
-            cursor="pointer"
-            title={hexToDmc(color) || `(${x + 1}, ${y + 1})`}
-          />
-        ))
+        row.map((color, x) => {
+          const dmcLabel = hexToDmc(color) || `(${x + 1}, ${y + 1})`;
+          return (
+            <Tooltip key={`${y}-${x}`} label={dmcLabel} hasArrow>
+              <Box
+                onClick={() => handleCellClick(y, x)}
+                w={cellSize}
+                h={cellSize}
+                bg={color || '#fff'}
+                border={showGrid ? '1px solid #ccc' : 'none'}
+                boxSizing="border-box"
+                cursor="pointer"
+              />
+            </Tooltip>
+          );
+        })
       )}
     </Box>
   );
