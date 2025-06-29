@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Flex, Button } from '@chakra-ui/react';
 import UsedColors from './UsedColors';
 import { getColorUsage } from './utils';
@@ -30,6 +30,11 @@ export default function DeepDive() {
 
   const [hover, setHover] = useState(null);
   const [selected, setSelected] = useState(null);
+  const [sectionComplete, setSectionComplete] = useState(false);
+
+  useEffect(() => {
+    setSectionComplete(false);
+  }, [selected?.x, selected?.y]);
 
   const overlays = [];
   for (let y = 0; y < inchRows; y++) {
@@ -104,6 +109,7 @@ export default function DeepDive() {
               selectedColor={null}
               showGrid={true}
               maxGridPx={300}
+              markX={sectionComplete}
             />
             <Box mt={2}>
               <UsedColors
@@ -111,6 +117,14 @@ export default function DeepDive() {
                 usage={colorUsage}
               />
             </Box>
+            <Button
+              mt={2}
+              width="100%"
+              colorScheme="teal"
+              onClick={() => setSectionComplete(prev => !prev)}
+            >
+              {sectionComplete ? 'Revisit Section' : 'Section Complete'}
+            </Button>
           </Box>
         )}
       </Flex>

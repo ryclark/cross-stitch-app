@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Tooltip } from '@chakra-ui/react';
 import { DMC_COLORS } from './ColorPalette';
+import { slightShade } from './utils';
 
 function hexToDmc(hex) {
   if (!hex) return null;
@@ -8,7 +9,7 @@ function hexToDmc(hex) {
   return found ? `${found.name} (#${found.code})` : null;
 }
 
-export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx = 400 }) {
+export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx = 400, markX = false }) {
   const rows = grid.length;
   const cols = grid[0]?.length || 0;
   const BORDER = 4; // total px for the 2px border around the grid
@@ -50,7 +51,28 @@ export default function Grid({ grid, setGrid, selectedColor, showGrid, maxGridPx
                 border={showGrid ? '1px solid #ccc' : 'none'}
                 boxSizing="border-box"
                 cursor="pointer"
-              />
+                position="relative"
+              >
+                {markX && color && (
+                  <Box
+                    position="absolute"
+                    top={0}
+                    left={0}
+                    width="100%"
+                    height="100%"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    pointerEvents="none"
+                    color={slightShade(color)}
+                    fontSize={`${cellSize * 0.8}px`}
+                    fontWeight="bold"
+                    lineHeight="1"
+                  >
+                    X
+                  </Box>
+                )}
+              </Box>
             </Tooltip>
           );
         })

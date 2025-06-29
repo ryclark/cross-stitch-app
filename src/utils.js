@@ -112,3 +112,18 @@ export function exportGridAsPng(grid, cellSize, showGrid) {
 
   return canvas.toDataURL('image/png');
 }
+
+// Return a shade slightly lighter or darker than the given color
+export function slightShade(hex, amount = 40) {
+  const [r, g, b] = hexToRgb(hex);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  const adj = brightness > 128 ? -amount : amount;
+  const clamp = v => Math.max(0, Math.min(255, v));
+  const toHex = v => v.toString(16).padStart(2, '0');
+  return (
+    '#' +
+    toHex(clamp(r + adj)) +
+    toHex(clamp(g + adj)) +
+    toHex(clamp(b + adj))
+  );
+}
