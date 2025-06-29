@@ -299,7 +299,7 @@ export default function ImportWizard({
               <FormControl isInvalid={widthIn < 2} sx={{
                 position: 'relative',
                 _focusWithin: { label: { transform: 'scale(0.85) translateY(-1.5rem)' } },
-                'input:not(:placeholder-shown) + label': {
+                'input:not(:placeholder-shown) + label, input[data-has-value="true"] + label': {
                   transform: 'scale(0.85) translateY(-1.5rem)'
                 },
                 label: {
@@ -322,6 +322,7 @@ export default function ImportWizard({
                     value={widthIn}
                     onChange={e => setWidthIn(Number(e.target.value))}
                     placeholder=' '
+                    data-has-value={widthIn > 0}
                   />
                   <InputRightAddon>Inches</InputRightAddon>
                 </InputGroup>
@@ -333,7 +334,7 @@ export default function ImportWizard({
               <FormControl isInvalid={heightIn < 2} sx={{
                 position: 'relative',
                 _focusWithin: { label: { transform: 'scale(0.85) translateY(-1.5rem)' } },
-                'input:not(:placeholder-shown) + label': {
+                'input:not(:placeholder-shown) + label, input[data-has-value="true"] + label': {
                   transform: 'scale(0.85) translateY(-1.5rem)'
                 },
                 label: {
@@ -356,6 +357,7 @@ export default function ImportWizard({
                     value={heightIn}
                     onChange={e => setHeightIn(Number(e.target.value))}
                     placeholder=' '
+                    data-has-value={heightIn > 0}
                   />
                   <InputRightAddon>Inches</InputRightAddon>
                 </InputGroup>
