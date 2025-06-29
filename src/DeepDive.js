@@ -38,15 +38,18 @@ export default function DeepDive() {
   const [focusedColor, setFocusedColor] = useState(null);
   const [sectionComplete, setSectionComplete] = useState(false);
   const [completedCells, setCompletedCells] = useState(new Set());
+  const [completedSections, setCompletedSections] = useState(new Set());
 
   const overlays = [];
   for (let y = 0; y < inchRows; y++) {
     for (let x = 0; x < inchCols; x++) {
       const w = cellSize * Math.min(fabricCount, cols - x * fabricCount);
       const h = cellSize * Math.min(fabricCount, rows - y * fabricCount);
+      const sectionKey = `${y}-${x}`;
+      const done = completedSections.has(sectionKey);
       overlays.push(
         <Box
-          key={`${y}-${x}`}
+          key={sectionKey}
           position="absolute"
           left={x * inchPx}
           top={y * inchPx}
@@ -59,7 +62,27 @@ export default function DeepDive() {
             setSelected({ x, y, w, h });
             setHover(null);
           }}
-        />
+        >
+          {done && !selected && (
+            <Box
+              position="absolute"
+              top={0}
+              left={0}
+              right={0}
+              bottom={0}
+              bg="rgba(255,255,255,0.7)"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              fontSize="2xl"
+              fontWeight="bold"
+              color="teal"
+              pointerEvents="none"
+            >
+              ✓
+            </Box>
+          )}
+        </Box>
       );
     }
   }
@@ -83,12 +106,15 @@ export default function DeepDive() {
     setFocusedColor(null);
     if (selected) {
       const keys = getSectionKeys(selected);
-      const done = keys.every(k => completedCells.has(k));
+      const sectionKey = `${selected.y}-${selected.x}`;
+      const done =
+        completedSections.has(sectionKey) ||
+        keys.every(k => completedCells.has(k));
       setSectionComplete(done);
     } else {
       setSectionComplete(false);
     }
-  }, [active, completedCells]);
+  }, [active, completedCells, completedSections]);
 
   const subGrid = active
     ? grid
@@ -170,6 +196,7 @@ export default function DeepDive() {
                 colorScheme="teal"
                 onClick={() => {
                   const keys = getSectionKeys(selected);
+                  const sectionKey = `${selected.y}-${selected.x}`;
                   setCompletedCells(prev => {
                     const next = new Set(prev);
                     if (sectionComplete) {
@@ -177,6 +204,12 @@ export default function DeepDive() {
                     } else {
                       keys.forEach(k => next.add(k));
                     }
+                    return next;
+                  });
+                  setCompletedSections(prev => {
+                    const next = new Set(prev);
+                    if (sectionComplete) next.delete(sectionKey);
+                    else next.add(sectionKey);
                     return next;
                   });
                   setSectionComplete(prev => !prev);
