@@ -3,9 +3,10 @@ import {
   Box,
   Button,
   Flex,
-  Input,
   InputGroup,
   InputRightAddon,
+  NumberInput,
+  NumberInputField,
   Select,
   FormControl,
   FormLabel,
@@ -46,6 +47,17 @@ export default function ImportWizard({
   const [fabricCount, setFabricCount] = useState(14);
   const [widthIn, setWidthIn] = useState(4);
   const [heightIn, setHeightIn] = useState(4);
+
+  const inchFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat(undefined, {
+        style: 'unit',
+        unit: 'inch',
+        unitDisplay: 'long',
+        maximumFractionDigits: 1
+      }),
+    []
+  );
 
   const inchCell = 12; // size of a single stitch preview cell
 
@@ -313,13 +325,18 @@ export default function ImportWizard({
                 }
               }}>
                 <InputGroup>
-                  <Input
-                    type='number'
+                  <NumberInput
                     value={widthIn}
-                    onChange={e => setWidthIn(Number(e.target.value))}
-                    placeholder=' '
-                    data-has-value={widthIn > 0}
-                  />
+                    onChange={(_, v) => setWidthIn(v)}
+                    min={2}
+                    max={10}
+                    width='full'
+                  >
+                    <NumberInputField
+                      placeholder=' '
+                      data-has-value={widthIn > 0}
+                    />
+                  </NumberInput>
                   <InputRightAddon>Inches</InputRightAddon>
                 </InputGroup>
                 <FormLabel>Width</FormLabel>
@@ -348,13 +365,18 @@ export default function ImportWizard({
                 }
               }}>
                 <InputGroup>
-                  <Input
-                    type='number'
+                  <NumberInput
                     value={heightIn}
-                    onChange={e => setHeightIn(Number(e.target.value))}
-                    placeholder=' '
-                    data-has-value={heightIn > 0}
-                  />
+                    onChange={(_, v) => setHeightIn(v)}
+                    min={2}
+                    max={10}
+                    width='full'
+                  >
+                    <NumberInputField
+                      placeholder=' '
+                      data-has-value={heightIn > 0}
+                    />
+                  </NumberInput>
                   <InputRightAddon>Inches</InputRightAddon>
                 </InputGroup>
                 <FormLabel>Height</FormLabel>
@@ -365,7 +387,7 @@ export default function ImportWizard({
             </Flex>
             <Text fontSize='sm'>
               Ratio {widthIn}:{heightIn}. Add a 2" border on each side for framing or hooping.
-              Total fabric ~ {(widthIn + 4).toFixed(1)}–{(widthIn + 6).toFixed(1)}" x {(heightIn + 4).toFixed(1)}–{(heightIn + 6).toFixed(1)}".
+              Total fabric ~ {inchFormatter.format(widthIn + 4)}–{inchFormatter.format(widthIn + 6)} x {inchFormatter.format(heightIn + 4)}–{inchFormatter.format(heightIn + 6)}.
             </Text>
             <Box textAlign='center' mt={4}>
               <Box
