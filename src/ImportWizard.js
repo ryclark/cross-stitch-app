@@ -3,10 +3,11 @@ import {
   Box,
   Button,
   Flex,
-  InputGroup,
-  InputRightAddon,
   NumberInput,
   NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
   Select,
   FormControl,
   FormLabel,
@@ -303,82 +304,40 @@ export default function ImportWizard({
         {step === 1 && (
           <Box>
             <Flex gap={2} mb={2} align='center' flexDir={{ base: 'column', sm: 'row' }}>
-              <FormControl isInvalid={widthIn < 2} sx={{
-                position: 'relative',
-                _focusWithin: { label: { transform: 'scale(0.85) translateY(-1.5rem)' } },
-                'input:not(:placeholder-shown) + label, input[data-has-value="true"] + label': {
-                  transform: 'scale(0.85) translateY(-1.5rem)'
-                },
-                label: {
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  zIndex: 2,
-                  backgroundColor: 'white',
-                  pointerEvents: 'none',
-                  mx: 3,
-                  px: 1,
-                  my: 2,
-                  transformOrigin: 'left top',
-                  transition: 'transform 0.2s ease-in-out'
-                }
-              }}>
-                <InputGroup>
-                  <NumberInput
-                    value={widthIn}
-                    onChange={(_, v) => setWidthIn(v)}
-                    min={2}
-                    max={10}
-                    width='full'
-                  >
-                    <NumberInputField
-                      placeholder=' '
-                      data-has-value={widthIn > 0}
-                    />
-                  </NumberInput>
-                  <InputRightAddon>Inches</InputRightAddon>
-                </InputGroup>
-                <FormLabel>Width</FormLabel>
+              <FormControl isInvalid={widthIn < 2}>
+                <FormLabel>Width (inches)</FormLabel>
+                <NumberInput
+                  value={widthIn}
+                  onChange={(_, v) => setWidthIn(v)}
+                  min={2}
+                  max={10}
+                  width='full'
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
                 <FormErrorMessage>
                   Patterns need to be at least 2 inches by 2 inches
                 </FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={heightIn < 2} sx={{
-                position: 'relative',
-                _focusWithin: { label: { transform: 'scale(0.85) translateY(-1.5rem)' } },
-                'input:not(:placeholder-shown) + label, input[data-has-value="true"] + label': {
-                  transform: 'scale(0.85) translateY(-1.5rem)'
-                },
-                label: {
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  zIndex: 2,
-                  backgroundColor: 'white',
-                  pointerEvents: 'none',
-                  mx: 3,
-                  px: 1,
-                  my: 2,
-                  transformOrigin: 'left top',
-                  transition: 'transform 0.2s ease-in-out'
-                }
-              }}>
-                  <InputGroup>
-                    <NumberInput
-                      value={heightIn}
-                      onChange={(_, v) => setHeightIn(v)}
-                      min={2}
-                      max={10}
-                      width='full'
-                    >
-                      <NumberInputField
-                        placeholder=' '
-                        data-has-value={heightIn > 0}
-                      />
-                    </NumberInput>
-                    <InputRightAddon>Inches</InputRightAddon>
-                  </InputGroup>
-                <FormLabel>Height</FormLabel>
+              <FormControl isInvalid={heightIn < 2}>
+                <FormLabel>Height (inches)</FormLabel>
+                <NumberInput
+                  value={heightIn}
+                  onChange={(_, v) => setHeightIn(v)}
+                  min={2}
+                  max={10}
+                  width='full'
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
                 <FormErrorMessage>
                   Patterns need to be at least 2 inches by 2 inches
                 </FormErrorMessage>
