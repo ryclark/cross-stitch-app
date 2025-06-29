@@ -28,6 +28,9 @@ export default function DeepDive() {
   const inchPx = cellSize * fabricCount;
   const inchCols = Math.ceil(cols / fabricCount);
   const inchRows = Math.ceil(rows / fabricCount);
+  const subMaxPx = 300;
+  const subCellSize = Math.floor((subMaxPx - BORDER) / fabricCount);
+  const subGridWidth = subCellSize * fabricCount + BORDER;
 
   const [hover, setHover] = useState(null);
   const [selected, setSelected] = useState(null);
@@ -143,7 +146,7 @@ export default function DeepDive() {
             setGrid={() => {}}
             selectedColor={null}
             showGrid={true}
-            maxGridPx={300}
+            maxGridPx={subMaxPx}
             activeCell={focusedCell}
             activeColor={focusedColor}
             markComplete={sectionComplete}
@@ -152,7 +155,7 @@ export default function DeepDive() {
               setFocusedColor(prev => (prev === color ? prev : color));
             }}
           />
-            <Box mt={2}>
+            <Box mt={2} width={`${subGridWidth}px`}>
               <UsedColors
                 colors={Object.keys(colorUsage)}
                 usage={colorUsage}
