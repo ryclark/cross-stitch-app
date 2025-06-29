@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Box, Flex, Button } from '@chakra-ui/react';
 import UsedColors from './UsedColors';
 import { getColorUsage } from './utils';
+import { DMC_COLORS } from './ColorPalette';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Grid from './Grid';
 
@@ -33,6 +34,7 @@ export default function DeepDive() {
   const [focusedCell, setFocusedCell] = useState(null);
   const [focusedColor, setFocusedColor] = useState(null);
   const [sectionComplete, setSectionComplete] = useState(false);
+  const [completedCells, setCompletedCells] = useState(new Set());
 
   const overlays = [];
   for (let y = 0; y < inchRows; y++) {
@@ -59,13 +61,31 @@ export default function DeepDive() {
     }
   }
 
+  const getSectionKeys = section => {
+    const keys = [];
+    for (let dy = 0; dy < fabricCount; dy++) {
+      for (let dx = 0; dx < fabricCount; dx++) {
+        const yy = section.y * fabricCount + dy;
+        const xx = section.x * fabricCount + dx;
+        if (yy < rows && xx < cols) keys.push(`${yy}-${xx}`);
+      }
+    }
+    return keys;
+  };
+
   const active = selected || hover;
 
   useEffect(() => {
     setFocusedCell(null);
     setFocusedColor(null);
-    setSectionComplete(false);
-  }, [active]);
+    if (selected) {
+      const keys = getSectionKeys(selected);
+      const done = keys.every(k => completedCells.has(k));
+      setSectionComplete(done);
+    } else {
+      setSectionComplete(false);
+    }
+  }, [active, completedCells]);
 
   const subGrid = active
     ? grid
@@ -74,6 +94,16 @@ export default function DeepDive() {
     : null;
 
   const colorUsage = subGrid ? getColorUsage(subGrid) : {};
+  const completedUsage = useMemo(() => {
+    const counts = {};
+    completedCells.forEach(key => {
+      const [y, x] = key.split('-').map(Number);
+      const c = grid[y][x];
+      if (!c) return;
+      counts[c] = (counts[c] || 0) + 1;
+    });
+    return counts;
+  }, [completedCells, grid]);
 
   return (
     <Box p={4}>
@@ -88,6 +118,7 @@ export default function DeepDive() {
             selectedColor={null}
             showGrid={true}
             maxGridPx={maxGridPx}
+            completedCells={completedCells}
           />
           <Box position="absolute" top={0} left={0} right={0} bottom={0}>
             {overlays}
@@ -118,7 +149,7 @@ export default function DeepDive() {
             markComplete={sectionComplete}
             onCellClick={(y, x, color) => {
               setFocusedCell(null);
-              setFocusedColor(color);
+              setFocusedColor(prev => (prev === color ? prev : color));
             }}
           />
             <Box mt={2}>
@@ -128,16 +159,57 @@ export default function DeepDive() {
                 activeColor={focusedColor}
                 onColorClick={color => {
                   setFocusedCell(null);
-                  setFocusedColor(color);
+                  setFocusedColor(prev => (prev === color ? prev : color));
                 }}
               />
               <Button
                 mt={2}
                 colorScheme="teal"
-                onClick={() => setSectionComplete(prev => !prev)}
+                onClick={() => {
+                  const keys = getSectionKeys(selected);
+                  setCompletedCells(prev => {
+                    const next = new Set(prev);
+                    if (sectionComplete) {
+                      keys.forEach(k => next.delete(k));
+                    } else {
+                      keys.forEach(k => next.add(k));
+                    }
+                    return next;
+                  });
+                  setSectionComplete(prev => !prev);
+                }}
               >
                 {sectionComplete ? 'Revisit Section' : 'Section Complete'}
               </Button>
+              {focusedColor && (
+                <Box mt={3} textAlign="center">
+                  {(() => {
+                    const dmc = DMC_COLORS.find(
+                      c => c.hex.toLowerCase() === focusedColor.toLowerCase()
+                    );
+                    const name = dmc
+                      ? `${dmc.name} (#${dmc.code})`
+                      : focusedColor;
+                    const sectionCount = colorUsage[focusedColor] || 0;
+                    const remaining =
+                      (pattern.colorUsage[focusedColor] || 0) -
+                      (completedUsage[focusedColor] || 0);
+                    const skeins = (remaining / 1800).toFixed(2);
+                    return (
+                      <>
+                        <Box fontWeight="bold">{name}</Box>
+                        <Box fontSize="sm">
+                          {sectionCount} stitches in this section
+                          <br />
+                          {remaining} stitches remaining overall
+                          <br />
+                          {skeins} skeins needed
+                        </Box>
+                      </>
+                    );
+                  })()}
+                </Box>
+              )}
             </Box>
           </Box>
         )}

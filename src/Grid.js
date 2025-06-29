@@ -18,7 +18,8 @@ export default function Grid({
   activeCell = null,
   activeColor = null,
   onCellClick = null,
-  markComplete = false
+  markComplete = false,
+  completedCells = null
 }) {
   const rows = grid.length;
   const cols = grid[0]?.length || 0;
@@ -59,6 +60,9 @@ export default function Grid({
             : activeColor
             ? color !== activeColor
             : false;
+          const cellKey = `${y}-${x}`;
+          const isComplete =
+            markComplete || (completedCells && completedCells.has(cellKey));
           return (
             <Tooltip key={`${y}-${x}`} label={dmcLabel} hasArrow>
               <Box
@@ -73,10 +77,10 @@ export default function Grid({
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                color={markComplete ? overlayShade(color || '#fff') : 'inherit'}
-                fontWeight={markComplete ? 'bold' : 'normal'}
+                color={isComplete ? overlayShade(color || '#fff') : 'inherit'}
+                fontWeight={isComplete ? 'bold' : 'normal'}
               >
-                {markComplete ? 'X' : null}
+                {isComplete ? 'X' : null}
               </Box>
             </Tooltip>
           );
