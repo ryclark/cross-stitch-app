@@ -58,7 +58,7 @@ export default function Grid({
           const dimmed = activeCell
             ? !(activeCell.y === y && activeCell.x === x)
             : activeColor
-            ? color !== activeColor
+            ? (color || '').toLowerCase() !== activeColor.toLowerCase()
             : false;
           const cellKey = `${y}-${x}`;
           const isComplete =
