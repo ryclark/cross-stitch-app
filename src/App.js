@@ -21,6 +21,8 @@ import UsedColors from './UsedColors';
 import ImportWizard from './ImportWizard';
 import Header from './Header';
 import Footer from './Footer';
+import DeepDive from './DeepDive';
+import { useNavigate, useLocation } from 'react-router-dom';
 import sample1 from './images/samples/dancer.png';
 import sample2 from './images/samples/baloons.png';
 import sample3 from './images/samples/rain.png';
@@ -32,6 +34,8 @@ export default function App() {
   const [showGridLines, setShowGridLines] = useState(false);
   const fileInputRef = useRef();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleImageUpload = file => {
     if (!file) return;
@@ -89,6 +93,22 @@ export default function App() {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
+  const handleDeepDive = () => {
+    if (pattern) {
+      navigate('/deep-dive', { state: { pattern } });
+    }
+  };
+
+  if (location.pathname === '/deep-dive') {
+    return (
+      <Box minH="100vh" display="flex" flexDirection="column">
+        <Header />
+        <DeepDive />
+        <Footer />
+      </Box>
+    );
+  }
+
   return (
     <Box minH="100vh" display="flex" flexDirection="column">
       <Header />
@@ -140,9 +160,14 @@ export default function App() {
                 onChange={e => setShowGridLines(e.target.checked)}
               />
             </FormControl>
-            <Button mt={4} colorScheme="teal" onClick={onOpen}>
-              Pattern Details
-            </Button>
+            <Box mt={4}>
+              <Button colorScheme="teal" mr={2} onClick={onOpen}>
+                Pattern Details
+              </Button>
+              <Button colorScheme="teal" onClick={handleDeepDive}>
+                Deep Dive
+              </Button>
+            </Box>
           </>
         )}
       </Box>
