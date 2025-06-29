@@ -4,7 +4,12 @@ import {
   Button,
   Flex,
   Input,
+  InputGroup,
+  InputRightAddon,
   Select,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
   Slider,
   SliderTrack,
   SliderFilledTrack,
@@ -290,9 +295,75 @@ export default function ImportWizard({
 
         {step === 1 && (
           <Box>
-            <Flex gap={2} mb={2} align='center'>
-              <Input type='number' value={widthIn} onChange={e => setWidthIn(Number(e.target.value))} placeholder='Width (in)' />
-              <Input type='number' value={heightIn} onChange={e => setHeightIn(Number(e.target.value))} placeholder='Height (in)' />
+            <Flex gap={2} mb={2} align='center' flexDir={{ base: 'column', sm: 'row' }}>
+              <FormControl isInvalid={widthIn < 2} sx={{
+                position: 'relative',
+                _focusWithin: { label: { transform: 'scale(0.85) translateY(-1.5rem)' } },
+                'input:not(:placeholder-shown) + label': {
+                  transform: 'scale(0.85) translateY(-1.5rem)'
+                },
+                label: {
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  zIndex: 2,
+                  backgroundColor: 'white',
+                  pointerEvents: 'none',
+                  mx: 3,
+                  px: 1,
+                  my: 2,
+                  transformOrigin: 'left top',
+                  transition: 'transform 0.2s ease-in-out'
+                }
+              }}>
+                <InputGroup>
+                  <Input
+                    type='number'
+                    value={widthIn}
+                    onChange={e => setWidthIn(Number(e.target.value))}
+                    placeholder=' '
+                  />
+                  <InputRightAddon>Inches</InputRightAddon>
+                </InputGroup>
+                <FormLabel>Width</FormLabel>
+                <FormErrorMessage>
+                  Patterns need to be at least 2 inches by 2 inches
+                </FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={heightIn < 2} sx={{
+                position: 'relative',
+                _focusWithin: { label: { transform: 'scale(0.85) translateY(-1.5rem)' } },
+                'input:not(:placeholder-shown) + label': {
+                  transform: 'scale(0.85) translateY(-1.5rem)'
+                },
+                label: {
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  zIndex: 2,
+                  backgroundColor: 'white',
+                  pointerEvents: 'none',
+                  mx: 3,
+                  px: 1,
+                  my: 2,
+                  transformOrigin: 'left top',
+                  transition: 'transform 0.2s ease-in-out'
+                }
+              }}>
+                <InputGroup>
+                  <Input
+                    type='number'
+                    value={heightIn}
+                    onChange={e => setHeightIn(Number(e.target.value))}
+                    placeholder=' '
+                  />
+                  <InputRightAddon>Inches</InputRightAddon>
+                </InputGroup>
+                <FormLabel>Height</FormLabel>
+                <FormErrorMessage>
+                  Patterns need to be at least 2 inches by 2 inches
+                </FormErrorMessage>
+              </FormControl>
             </Flex>
             <Text fontSize='sm'>
               Ratio {widthIn}:{heightIn}. Add a 2" border on each side for framing or hooping.
