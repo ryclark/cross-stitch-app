@@ -55,11 +55,12 @@ export default function Grid({
       {grid.map((row, y) =>
         row.map((color, x) => {
           const dmcLabel = hexToDmc(color) || `(${x + 1}, ${y + 1})`;
-          const dimmed = activeCell
-            ? !(activeCell.y === y && activeCell.x === x)
-            : activeColor
-            ? (color || '').toLowerCase() !== activeColor.toLowerCase()
-            : false;
+          const colorFiltered =
+            activeColor &&
+            (color || '').toLowerCase() !== activeColor.toLowerCase();
+          const dimmed =
+            activeCell && !(activeCell.y === y && activeCell.x === x);
+          const displayColor = colorFiltered ? null : color;
           const cellKey = `${y}-${x}`;
           const isComplete =
             markComplete || (completedCells && completedCells.has(cellKey));
@@ -69,7 +70,7 @@ export default function Grid({
               onClick={() => handleCellClick(y, x)}
               w={cellSize}
               h={cellSize}
-              bg={color || '#fff'}
+              bg={displayColor || '#fff'}
               border={showGrid ? '1px solid #ccc' : 'none'}
               boxSizing="border-box"
               cursor="pointer"
@@ -77,7 +78,7 @@ export default function Grid({
               display="flex"
               alignItems="center"
               justifyContent="center"
-              color={isComplete ? overlayShade(color || '#fff') : 'inherit'}
+              color={isComplete ? overlayShade(displayColor || '#fff') : 'inherit'}
               fontWeight={isComplete ? 'bold' : 'normal'}
               title={dmcLabel}
             >
