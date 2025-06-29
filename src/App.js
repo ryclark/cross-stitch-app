@@ -198,7 +198,11 @@ export default function App() {
               <Box mb={2}>
                 <strong>Colors</strong>
               </Box>
-              <UsedColors colors={pattern.colors} usage={pattern.colorUsage} />
+              <UsedColors
+                colors={pattern.colors}
+                usage={pattern.colorUsage}
+                showSkeins
+              />
             </DrawerBody>
           </DrawerContent>
         </Drawer>
