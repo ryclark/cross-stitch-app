@@ -1,0 +1,8 @@
+{
+  "type": "module",
+  "devDependencies": {
+    "@aws-amplify/backend": "^1.16.1",
+    "@aws-amplify/backend-cli": "^1.8.0",
+    "react": "^18.3.1"
+  }
+}
